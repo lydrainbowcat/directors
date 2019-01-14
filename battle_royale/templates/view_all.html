@@ -1,0 +1,26 @@
+<!doctype html>
+<title>大逃杀行动结算</title>
+<style>
+    input {
+        font-size: 1rem;
+    }
+</style>
+<!--{% if name %}
+  <h1>Hello {{ name }}!</h1>
+{% else %}
+  <h1>Hello, World!</h1>
+{% endif %}-->
+<h3>反馈行动</h3>
+<form action="{{ send_url }}" method="POST">
+    <input type="text" name="to" placeholder="反馈对象" size=10/>
+    <input type="text" name="content" placeholder="反馈内容" size=30/>
+    <input type="submit" value="发送"/>
+</form>
+
+<h3>历史行动</h3>
+{% for message in messages %}
+    <p>
+        {{ message.time }} {{ message.from }} 对 {{ message.to }} 说：<br/>
+        {{ message.content }}
+    </p>
+{% endfor %}
