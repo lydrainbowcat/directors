@@ -17,7 +17,7 @@
 </form>
 
 <h3>历史行动</h3>
-{% for message in messages %}
+{% for message in messages | reverse %}
     <p>
         {{ message.time }} {{ message.from }} 对 {{ message.to }} 说：<br/>
         {{ message.content }}

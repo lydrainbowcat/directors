@@ -10,7 +10,7 @@ def add(user, direction, content):
     read_ts = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(ts))
     print(read_ts, users[user], direction, content)
     messages[user].append({
-        'timestamp': -ts,
+        'timestamp': ts,
         "time": read_ts,
         'content': content,
         'from': users[user] if direction == 0 else '导演',
