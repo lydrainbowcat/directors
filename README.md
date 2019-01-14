@@ -1,4 +1,4 @@
-# Snowstorm Villa
+# Directors
 
 A collection of tiny directors for [Mistytown](http://www.mistytown.cn:83) games.
 
@@ -9,4 +9,3 @@ A collection of tiny directors for [Mistytown](http://www.mistytown.cn:83) games
 Make sure you have Python3 installed.
 
 Install all dependencies in `requirements.txt` and run `python main.py` in a virtual env.
-
