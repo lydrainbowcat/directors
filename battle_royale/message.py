@@ -1,4 +1,5 @@
 import time
+import sys
 from user import users
 
 messages = {user: [] for user in users.keys()}
@@ -8,13 +9,16 @@ def add(user, direction, content):
         return
     ts = time.time()
     read_ts = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(ts))
-    print(read_ts, users[user], direction, content)
+    src = users[user] if direction == 0 else '导演'
+    dst = users[user] if direction == 1 else '导演'
+    print(read_ts, src, '->', dst, ': ', content)
+    sys.stdout.flush()
     messages[user].append({
         'timestamp': ts,
         "time": read_ts,
         'content': content,
-        'from': users[user] if direction == 0 else '导演',
-        'to': users[user] if direction == 1 else '导演'
+        'from': src,
+        'to': dst
     })
 
 def get(user):
