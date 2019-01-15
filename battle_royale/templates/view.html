@@ -1,4 +1,5 @@
 <!doctype html>
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>大逃杀行动提交</title>
 <style>
     input {
@@ -12,8 +13,9 @@
 {% endif %}-->
 <h3>提交行动</h3>
 <form action="{{ send_url }}" method="POST">
-    <input type="text" name="content" placeholder="行动内容" size=30/>
+    <input type="text" name="content" id="content" placeholder="行动内容" size=30 value="{{ content }}"/>
     <input type="submit" value="提交"/>
+    <p>行动内容格式任意，由导演人工结算，本页面10s自动刷新一次以获取反馈。</p>
 </form>
 
 <h3>历史行动</h3>
@@ -23,3 +25,11 @@
         {{ message.content }}
     </p>
 {% endfor %}
+
+<script>
+    function refresh() {
+        const text = document.getElementById("content").value;
+        location.href = location.pathname + "?content=" + text;
+    }
+    setTimeout("refresh();", 10000);
+</script>

@@ -1,4 +1,5 @@
 <!doctype html>
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>大逃杀行动结算</title>
 <style>
     input {
@@ -12,8 +13,8 @@
 {% endif %}-->
 <h3>反馈行动</h3>
 <form action="{{ send_url }}" method="POST">
-    <input type="text" name="to" placeholder="反馈对象" size=10/>
-    <input type="text" name="content" placeholder="反馈内容" size=30/>
+    <input type="text" name="to" id="to" placeholder="反馈对象" size=10 value="{{ to }}"/>
+    <input type="text" name="content" id="content" placeholder="反馈内容" size=30 value="{{ content }}"/>
     <input type="submit" value="发送"/>
 </form>
 
@@ -24,3 +25,12 @@
         {{ message.content }}
     </p>
 {% endfor %}
+
+<script>
+    function refresh() {
+        const dst =document.getElementById("to").value;
+        const text = document.getElementById("content").value;
+        location.href = location.pathname + "?to=" + dst + "&content=" + text;
+    }
+    setTimeout("refresh();", 10000);
+</script>

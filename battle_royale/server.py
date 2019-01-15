@@ -28,9 +28,12 @@ def view_messages(key):
         return redirect(url_for('index'))
 
     if is_director(user):
-        return render_template('view_all.html', messages=message.all(), send_url='/api/send/'+key)
+        to = request.args.get('to', '')
+        content = request.args.get('content', '')
+        return render_template('view_all.html', messages=message.all(), send_url='/api/send/'+key, to=to, content=content)
     else:
-        return render_template('view.html', messages=message.get(user), send_url='/api/send/'+key)
+        content = request.args.get('content', '')
+        return render_template('view.html', messages=message.get(user), send_url='/api/send/'+key, content=content)
 
 @app.route('/api/send/<key>', methods=['POST'])
 def send_message(key):
