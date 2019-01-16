@@ -13,12 +13,19 @@ def add(user, direction, content):
     dst = users[user] if direction == 1 else '导演'
     print(read_ts, src, '->', dst, ': ', content)
     sys.stdout.flush()
-    messages[user].append({
+    q = messages[user]
+    if direction == 1:
+        for i in range(len(q) - 1, -1, -1):
+            if q[i]['read']:
+                break
+            q[i]['read'] = True
+    q.append({
         'timestamp': ts,
-        "time": read_ts,
+        'time': read_ts,
         'content': content,
         'from': src,
-        'to': dst
+        'to': dst,
+        'read': direction == 1
     })
 
 def get(user):

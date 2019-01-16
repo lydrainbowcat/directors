@@ -13,7 +13,7 @@
 {% endif %}-->
 <h3>提交行动</h3>
 <form action="{{ send_url }}" method="POST">
-    <input type="text" name="content" id="content" placeholder="行动内容" size=30 value="{{ content }}"/>
+    <input type="text" name="content" id="content" placeholder="行动内容" size=30 autofocus="autofocus" value="{{ content }}"/>
     <input type="submit" value="提交"/>
     <p>行动内容格式任意，由导演人工结算，本页面10s自动刷新一次以获取反馈。</p>
 </form>
@@ -21,15 +21,27 @@
 <h3>历史行动</h3>
 {% for message in messages | reverse %}
     <p>
-        {{ message.time }} {{ message.from }} 对 {{ message.to }} 说：<br/>
+        {{ message.time }} 角色 <b>{{ message.from }}</b> 对 <b>{{ message.to }}</b> 说：<br/>
         {{ message.content }}
     </p>
 {% endfor %}
 
 <script>
+    function setCaretPosition(input, pos){
+        if (input.setSelectionRange){
+            setTimeout(function() {
+                input.setSelectionRange(pos, pos);
+                input.focus();
+            }, 5);
+        }
+    }
+
     function refresh() {
         const text = document.getElementById("content").value;
         location.href = location.pathname + "?content=" + text;
     }
+
+    const input = document.getElementById("content");
+    setCaretPosition(input, input.value.length);
     setTimeout("refresh();", 10000);
 </script>

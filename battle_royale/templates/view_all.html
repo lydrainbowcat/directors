@@ -14,23 +14,39 @@
 <h3>反馈行动</h3>
 <form action="{{ send_url }}" method="POST">
     <input type="text" name="to" id="to" placeholder="反馈对象" size=10 value="{{ to }}"/>
-    <input type="text" name="content" id="content" placeholder="反馈内容" size=30 value="{{ content }}"/>
+    <input type="text" name="content" id="content" placeholder="反馈内容" size=30 autofocus="autofocus" value="{{ content }}"/>
     <input type="submit" value="发送"/>
 </form>
 
 <h3>历史行动</h3>
 {% for message in messages | reverse %}
+    {% if message.read %}
     <p>
-        {{ message.time }} {{ message.from }} 对 {{ message.to }} 说：<br/>
+    {% else %}
+    <p style="color:blue">
+    {% endif %}
+        {{ message.time }} 角色 <b>{{ message.from }}</b> 对 <b>{{ message.to }}</b> 说：<br/>
         {{ message.content }}
     </p>
 {% endfor %}
 
 <script>
+    function setCaretPosition(input, pos){
+        if (input.setSelectionRange){
+            setTimeout(function() {
+                input.setSelectionRange(pos, pos);
+                input.focus();
+            }, 5);
+        }
+    }
+
     function refresh() {
-        const dst =document.getElementById("to").value;
+        const dst = document.getElementById("to").value;
         const text = document.getElementById("content").value;
         location.href = location.pathname + "?to=" + dst + "&content=" + text;
     }
+
+    const input = document.getElementById("content");
+    setCaretPosition(input, input.value.length);
     setTimeout("refresh();", 10000);
 </script>
