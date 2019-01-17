@@ -12,10 +12,15 @@
   <h1>Hello, World!</h1>
 {% endif %}-->
 <h3>提交行动</h3>
-<form action="{{ send_url }}" method="POST">
+<form action="{{ send_url }}" method="POST" onsubmit="return {% if not disabled %}true{% else %}false{% endif %};">
     <input type="text" name="content" id="content" placeholder="行动内容" size=30 autofocus="autofocus" value="{{ content }}"/>
-    <input type="submit" value="提交"/>
-    <p>行动内容格式任意，由导演人工结算，本页面10s自动刷新一次以获取反馈。</p>
+    {% if not disabled %}
+        <input type="submit" value="提交"/>
+    {% endif %}
+    <p>行动内容可包含多条指令<b>（每种指令至多一条）</b>，指令失败不扣除体力。</p>
+    <p>导演人工结算，<b>反馈前不可提交新的行动</b>。本页面一分钟自动刷新一次。</p>
+    <p>【例】行动：装备手枪，移动海岸西，搜索，攻击。反馈：装备成功，移动成功，道具冰镐，攻击无效。</p>
+    <p>【例】继续行动：捡拾，移动树林北，搜索，攻击。反馈：捡拾冰镐，移动成功，角色XX，攻击成功。</p>
 </form>
 
 <h3>历史行动</h3>
@@ -43,5 +48,5 @@
 
     const input = document.getElementById("content");
     setCaretPosition(input, input.value.length);
-    setTimeout("refresh();", 10000);
+    setTimeout("refresh();", 60000);
 </script>

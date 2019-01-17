@@ -30,10 +30,13 @@ def view_messages(key):
     if is_director(user):
         to = request.args.get('to', '')
         content = request.args.get('content', '')
-        return render_template('view_all.html', messages=message.all(), send_url='/api/send/'+key, to=to, content=content)
+        messages = message.all()
+        return render_template('view_all.html', messages=messages, send_url='/api/send/'+key, to=to, content=content)
     else:
         content = request.args.get('content', '')
-        return render_template('view.html', messages=message.get(user), send_url='/api/send/'+key, content=content)
+        messages = message.get(user)
+        disabled = len(messages) > 0 and is_director(messages[-1]['to'])
+        return render_template('view.html', messages=message.get(user), send_url='/api/send/'+key, content=content, disabled=disabled)
 
 @app.route('/api/send/<key>', methods=['POST'])
 def send_message(key):

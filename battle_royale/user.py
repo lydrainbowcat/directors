@@ -147,7 +147,7 @@ def has_user(user):
     return user in users
 
 def is_director(user):
-    return users[user] == '导演'
+    return user == '导演' or users.get(user, '') == '导演'
 
 def get_id(name):
     name = name.strip()
