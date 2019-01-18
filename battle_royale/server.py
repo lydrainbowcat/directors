@@ -2,7 +2,7 @@ from flask import Flask
 from flask import request, redirect, url_for, render_template
 from user import users, encrypt, decrypt, is_director, has_user, get_id
 from data import roles, places, alive_roles, enabled_places
-from action import act
+from action import act, act_admin
 import message
 
 app = Flask(__name__)
@@ -32,7 +32,7 @@ def view_messages(key):
     if is_director(user):
         messages = message.all()
         return render_template('view_all.html', messages=messages, send_url='/api/send/'+key,
-                               roles=alive_roles(), places=enabled_places())
+                               roles=alive_roles(), places=enabled_places(), admin_url='/api/admin/'+key)
 
     else:
         messages = message.get(user)
@@ -66,4 +66,17 @@ def send_message(key):
                 message.add(get_id(dst), 1, content)
             else:
                 message.add(user, 0, content)
+    return redirect(url_for('view_messages', key=key))
+
+@app.route('/api/admin/<key>', methods=['POST'])
+def admin_action(key):
+    try:
+        user = decrypt(key)
+        if not has_user(user) or not is_director(user):
+            raise
+    except:
+        return redirect(url_for('index'))
+    
+    action = request.form.get('action', '')
+    act_admin(action, request.form)
     return redirect(url_for('view_messages', key=key))

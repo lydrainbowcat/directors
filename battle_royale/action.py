@@ -192,7 +192,44 @@ def act(role, action, params):
         elif action == 'use':
             msg = '使用' + params[2]
             res = use(role, params[2])
-    except:
+    except Exception as e:
+        res = str(e)
         traceback.print_exc()
     mutex.release()
     return msg + '。反馈：' + res
+
+def act_admin(action, params):
+    res = ''
+    try:
+        if action == 'life':
+            target = params.get('life_target')
+            role = roles[target]
+            value = int(params.get('life_value'))
+            role['life'] += value
+            if role['life'] <= 0:
+                role['life'] = 0
+                role['able'] = False
+                places[role['location']]['exists'].remove(target)
+                places[role['location']]['exists'] += role['things']
+        elif action == 'strength':
+            target = params.get('strength_target')
+            role = roles[target]
+            value = int(params.get('strength_value'))
+            roles[target]['strength'] += value
+        elif action == 'electronic':
+            target = params.get('electronic_target')
+            role = roles[target]
+            for t in places[role['location']]['exists'][:]:
+                if t in roles and t != target:
+                    roles[t]['able'] = False
+        elif action == 'rope':
+            target = params.get('rope_target')
+            role = roles[target]
+            roles[target]['able'] = False
+        elif action == 'unrope':
+            target = params.get('unrope_target')
+            role = roles[target]
+            roles[target]['able'] = True
+    except Exception as e:
+        res = str(e)
+        traceback.print_exc()

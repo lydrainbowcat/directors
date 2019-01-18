@@ -11,12 +11,37 @@
     }
 </style>
 
-<h3>手动反馈</h3>
+<h3>手动操作</h3>
 <form action="{{ send_url }}" method="POST">
     <input type="hidden" name="action" value="send"/>
     <input type="text" name="to" placeholder="反馈对象" size="10"/>
     <input type="text" name="content" placeholder="反馈内容" size="30"/>
     <input type="submit" value="发送"/>
+</form>
+<form action="{{ admin_url }}" method="POST">
+    <p>
+        <label><input type="radio" name="action" value="life" />加减生命</label>
+        <input type="text" name="life_target" placeholder="对象" size="10"/>
+        <input type="text" name="life_value" placeholder="数值（正/负）" size="10"/>
+    </p>
+    <p>
+        <label><input type="radio" name="action" value="strength" />加减体力</label>
+        <input type="text" name="strength_target" placeholder="对象" size="10"/>
+        <input type="text" name="strength_value" placeholder="数值（正/负）" size="10"/>
+    </p>
+    <p>
+        <label><input type="radio" name="action" value="electronic" />电击棒</label>
+        <input type="text" name="electronic_target" placeholder="使用者" size="10"/>
+    </p>
+    <p>
+        <label><input type="radio" name="action" value="rope" />捆绑</label>
+        <input type="text" name="rope_target" placeholder="对象" size="10"/>
+    </p>
+    <p>
+        <label><input type="radio" name="action" value="unrope" />松绑</label>
+        <input type="text" name="unrope_target" placeholder="对象" size="10"/>
+    </p>
+    <p><input type="submit" value="提交" /></p>
 </form>
 
 <h3>当前地点状态</h3>

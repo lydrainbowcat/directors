@@ -1,11 +1,11 @@
 places = {
     '墓地东': { 'order': 1, 'exists': [], 'able': True },
-    '墓地南': { 'order': 2, 'exists': ['手榴弹'], 'able': True },
+    '墓地南': { 'order': 2, 'exists': [], 'able': True },
     '墓地西': { 'order': 3, 'exists': [], 'able': True },
     '墓地北': { 'order': 4, 'exists': [], 'able': True },
     '医院东': { 'order': 5, 'exists': [], 'able': True },
     '医院南': { 'order': 6, 'exists': [], 'able': True },
-    '医院西': { 'order': 7, 'exists': [], 'able': True },
+    '医院西': { 'order': 7, 'exists': ['手榴弹'], 'able': True },
     '医院北': { 'order': 8, 'exists': [], 'able': True },
     '海岸东': { 'order': 9, 'exists': [], 'able': False },
     '海岸南': { 'order': 10, 'exists': [], 'able': False },
