@@ -4,7 +4,7 @@
 
 <h3>提交行动</h3>
 <p>
-    {{ role.name }}，生命：{{ role.life }}{% if role.injured > 0 %}（每晚结束减10）{% endif %}，
+    {{ role.name }}，生命：<b style="color:red">{{ role.life }}</b>{% if role.injured > 0 %}（每晚结束减10）{% endif %}，
     体力：{{ role.strength }}，当前位置：{{ role.location }}<br/>
     已装备：[{{ role.hands | join(' ') }}]，背包道具：[{{ role.things | join(' ') }}]
 </p>
@@ -28,7 +28,7 @@
         <label><input type="radio" name="action" value="attack" />攻击</label>
     </p>
     <p>
-        <label><input type="radio" name="action" value="equip" />装备</label>
+        <label><input type="radio" name="action" value="equip" />从背包拿到手里</label>
         <select name="equip_item">
             <option value="">选择</option>
             {% for item in role.things %}
@@ -37,7 +37,7 @@
         </select> 
     </p>
     <p>
-        <label><input type="radio" name="action" value="use" />使用</label>
+        <label><input type="radio" name="action" value="use" />使用手里的</label>
         <select name="use_item">
             <option value="">选择</option>
             {% for item in role.hands %}
