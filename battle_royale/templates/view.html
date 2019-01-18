@@ -1,26 +1,52 @@
 <!doctype html>
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>大逃杀行动提交</title>
-<style>
-    input {
-        font-size: 1rem;
-    }
-</style>
-<!--{% if name %}
-  <h1>Hello {{ name }}!</h1>
-{% else %}
-  <h1>Hello, World!</h1>
-{% endif %}-->
+
 <h3>提交行动</h3>
-<form action="{{ send_url }}" method="POST" onsubmit="return {% if not disabled %}true{% else %}false{% endif %};">
-    <input type="text" name="content" id="content" placeholder="行动内容" size=30 autofocus="autofocus" value="{{ content }}"/>
-    {% if not disabled %}
-        <input type="submit" value="提交"/>
-    {% endif %}
-    <p>行动内容可包含多条指令<b>（每种指令至多一条）</b>，指令失败不扣除体力。</p>
-    <p>导演人工结算，<b>反馈前不可提交新的行动</b>。本页面一分钟自动刷新一次。</p>
-    <p>【例】行动：装备手枪，移动海岸西，搜索，攻击。反馈：装备成功，移动成功，道具冰镐，攻击无效。</p>
-    <p>【例】继续行动：捡拾，移动树林北，搜索，攻击。反馈：捡拾冰镐，移动成功，角色XX，攻击成功。</p>
+<p>
+    {{ role.name }}，生命：{{ role.life }}{% if role.injured > 0 %}（每晚结束减10）{% endif %}，
+    体力：{{ role.strength }}，当前位置：{{ role.location }}<br/>
+    已装备：[{{ role.hands | join(' ') }}]，背包道具：[{{ role.things | join(' ') }}]
+</p>
+<form action="{{ send_url }}" method="POST">
+    <p>
+        <label><input type="radio" name="action" value="move" />移动</label>
+        <select name="move_to">
+            {% for place in places %}
+            <option value="{{ place.name }}">{{ place.name }}</option>
+            {% endfor %}
+        </select> 
+    </p>
+    <p>
+        <label><input type="radio" name="action" value="search" />搜索</label>
+    </p>
+    <p>
+        <label><input type="radio" name="action" value="pick" />捡拾</label>
+    </p>
+    <p>
+        <label><input type="radio" name="action" value="attack" />攻击</label>
+    </p>
+    <p>
+        <label><input type="radio" name="action" value="equip" />装备</label>
+        <select name="equip_item">
+            {% for item in role.things %}
+            <option value="{{ item }}">{{ item }}</option>
+            {% endfor %}
+        </select> 
+    </p>
+    <p>
+        <label><input type="radio" name="action" value="use" />使用</label>
+        <select name="use_item">
+            {% for item in role.hands %}
+            <option value="{{ item }}">{{ item }}</option>
+            {% endfor %}
+        </select> 
+    </p>
+    <p>
+        <label><input type="radio" name="action" value="send" />对话导演</label>
+        <input type="text" name="content" placeholder="对话内容" size="30"/>
+    </p>
+    <p><input type="submit" value="提交" /></p>
 </form>
 
 <h3>历史行动</h3>
@@ -46,7 +72,7 @@
         location.href = location.pathname + "?content=" + text;
     }
 
-    const input = document.getElementById("content");
-    setCaretPosition(input, input.value.length);
-    setTimeout("refresh();", 60000);
+    //const input = document.getElementById("content");
+    //setCaretPosition(input, input.value.length);
+    setTimeout("location.reload(true);", 60000);
 </script>

@@ -9,23 +9,18 @@ def add(user, direction, content):
         return
     ts = time.time()
     read_ts = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(ts))
-    src = users[user] if direction == 0 else '导演'
+    src = users[user] if direction != 1 else '导演'
     dst = users[user] if direction == 1 else '导演'
     print(read_ts, src, '->', dst, ': ', content)
     sys.stdout.flush()
     q = messages[user]
-    if direction == 1:
-        for i in range(len(q) - 1, -1, -1):
-            if q[i]['read']:
-                break
-            q[i]['read'] = True
     q.append({
         'timestamp': ts,
         'time': read_ts,
         'content': content,
         'from': src,
         'to': dst,
-        'read': direction == 1
+        'read': direction > 0
     })
 
 def get(user):
