@@ -91,12 +91,12 @@ def do_attack(role, target):
             if items[weapon][1] == 0:
                 role['hands'].remove(weapon)
                 role['things'].remove(weapon)
-            if weapon[0] == 1:
+            if items[weapon][0] == 1:
                 dec += 50
                 district = True
-            elif weapon[0] == 2:
+            elif items[weapon][0] == 2:
                 dec += 100
-            elif weapon[0] == 3:
+            elif items[weapon][0] == 3:
                 dec += 50
             else:
                 dec += 30
