@@ -70,7 +70,7 @@
         <td>{{ role.name }}</td><td>{{ role.location }}</td>
         <td>{{ role.life }}</td><td>{{ role.strength }}</td>
         <td>{{ role.hands | join(' ') }}</td>
-        <td>[{% for item in role.things %}{{ item }}({{ items.get(item, [9, 1])[1] }}次) {% endfor %}]</td>
+        <td>{% for item in role.things %}{{ item }}({{ items.get(item, [9, 1])[1] }}次) {% endfor %}</td>
     </tr>
     {% endfor %}
 </table>

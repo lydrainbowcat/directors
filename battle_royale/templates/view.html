@@ -6,7 +6,8 @@
 <p>
     {{ role.name }}，生命：<b style="color:red">{{ role.life }}</b>{% if role.injured > 0 %}（每晚结束减10）{% endif %}，
     体力：{{ role.strength }}，当前位置：{{ role.location }}<br/>
-    手中道具：[{{ role.hands | join(' ') }}]，背包道具：[{% for item in role.things %}{{ item }}({{ items.get(item, [9, 1])[1] }}次) {% endfor %}]
+    手中道具：{{ role.hands | join(' ') }}，
+    背包道具：{% for item in role.things %}{{ item }}({{ items.get(item, [9, 1])[1] }}次) {% endfor %}
 </p>
 <form action="{{ send_url }}" method="POST">
     <p>
