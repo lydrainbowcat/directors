@@ -6,11 +6,11 @@
 <p>
     {{ role.name }}，生命：<b style="color:red">{{ role.life }}</b>{% if role.injured > 0 %}（每晚结束减10）{% endif %}，
     体力：{{ role.strength }}，当前位置：{{ role.location }}<br/>
-    已装备：[{{ role.hands | join(' ') }}]，背包道具：[{{ role.things | join(' ') }}]
+    手中道具：[{{ role.hands | join(' ') }}]，背包道具：[{% for item in role.things %}{{ item }}({{ items.get(item, [9, 1])[1] }}次) {% endfor %}]
 </p>
 <form action="{{ send_url }}" method="POST">
     <p>
-        <label><input type="radio" name="action" value="move" />移动</label>
+        <label><input type="radio" name="action" value="move" />移动到</label>
         <select name="move_to">
             <option value="">选择</option>
             {% for place in places %}

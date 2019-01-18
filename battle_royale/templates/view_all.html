@@ -20,6 +20,12 @@
 </form>
 <form action="{{ admin_url }}" method="POST">
     <p>
+        <label><input type="radio" name="action" value="start" />开始行动</label>
+    </p>
+    <p>
+        <label><input type="radio" name="action" value="end" />结束行动</label>
+    </p>
+    <p>
         <label><input type="radio" name="action" value="life" />加减生命</label>
         <input type="text" name="life_target" placeholder="对象" size="10"/>
         <input type="text" name="life_value" placeholder="数值（正/负）" size="10"/>
@@ -41,6 +47,9 @@
         <label><input type="radio" name="action" value="unrope" />松绑</label>
         <input type="text" name="unrope_target" placeholder="对象" size="10"/>
     </p>
+    <p>
+        <label><input type="radio" name="action" value="save" />存盘</label>
+    </p>
     <p><input type="submit" value="提交" /></p>
 </form>
 
@@ -60,7 +69,8 @@
     <tr>
         <td>{{ role.name }}</td><td>{{ role.location }}</td>
         <td>{{ role.life }}</td><td>{{ role.strength }}</td>
-        <td>{{ role.hands | join(' ') }}</td><td>{{ role.things | join(' ') }}</td>
+        <td>{{ role.hands | join(' ') }}</td>
+        <td>[{% for item in role.things %}{{ item }}({{ items.get(item, [9, 1])[1] }}次) {% endfor %}]</td>
     </tr>
     {% endfor %}
 </table>

@@ -1,7 +1,7 @@
 from flask import Flask
 from flask import request, redirect, url_for, render_template
 from user import users, encrypt, decrypt, is_director, has_user, get_id
-from data import roles, places, alive_roles, enabled_places
+from data import roles, places, alive_roles, enabled_places, items
 from action import act, act_admin
 import message
 
@@ -31,14 +31,14 @@ def view_messages(key):
 
     if is_director(user):
         messages = message.all()
-        return render_template('view_all.html', messages=messages, send_url='/api/send/'+key,
-                               roles=alive_roles(), places=enabled_places(), admin_url='/api/admin/'+key)
+        return render_template('view_all.html', messages=messages, send_url='/api/send/'+key, admin_url='/api/admin/'+key,
+                               roles=alive_roles(), places=enabled_places(), items=items)
 
     else:
         messages = message.get(user)
         role = roles[users[user]]
         return render_template('view.html', messages=messages, send_url='/api/send/'+key,
-                               role=role, places=enabled_places())
+                               role=role, places=enabled_places(), items=items)
 
 @app.route('/api/send/<key>', methods=['POST'])
 def send_message(key):

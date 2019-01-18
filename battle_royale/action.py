@@ -2,6 +2,8 @@ import threading
 import random
 import traceback
 from data import roles, places, items
+from user import get_id
+import message
 
 costs = {
     'move': 5,
@@ -15,6 +17,7 @@ costs = {
 feedbacks = {}
 
 mutex = threading.Lock()
+living = False
 
 def move(role, to):
     if to not in places:
@@ -35,6 +38,7 @@ def search(role):
     feedbacks[role['name']] = ''
     place = places[role['location']]
     if len(place['exists']) == 1:
+        role['strength'] -= costs['search']
         return '空'
     res = random.choice(list(filter(lambda x: x != role['name'], place['exists'])))
     feedbacks[role['name']] = res
@@ -61,6 +65,7 @@ def be_attacked(source, target, value, ignore_defend=False, continual=False):
     if continual:
         target['injured'] = 10
     target['life'] -= value
+    message.add(get_id(target['name']), 1, '你被攻击，受到' + str(value) + '伤害')
     if target['life'] <= 0:
         target['life'] = 0
         target['able'] = False
@@ -161,6 +166,9 @@ def use(role, item):
         return '6-8类道具请对话导演人工结算'
 
 def act(role, action, params):
+    global living
+    if not living:
+        return '行动未开始'
     cost = costs.get(action, -1)
     if cost < 0:
         return '未定义的行动'
@@ -168,12 +176,12 @@ def act(role, action, params):
     msg = ''
     res = ''
     try:
-        if cost > role['strength']:
+        if not role['able']:
+            msg = '演员试图行动'
+            res = '你被禁止行动'
+        elif cost > role['strength']:
             msg = '演员试图行动'
             res = '体力不足'
-        elif not role['able']:
-            msg = '演员试图行动'
-            res = '禁止行动'
         elif action == 'move':
             msg = '移动' + params[0]
             res = move(role, params[0])
@@ -199,6 +207,7 @@ def act(role, action, params):
     return msg + '。反馈：' + res
 
 def act_admin(action, params):
+    global living
     res = ''
     try:
         if action == 'life':
@@ -230,6 +239,14 @@ def act_admin(action, params):
             target = params.get('unrope_target')
             role = roles[target]
             roles[target]['able'] = True
+        elif action == 'start':
+            living = True
+        elif action == 'end':
+            living = False
+        elif action == 'save':
+            print(places)
+            print(roles)
+            print(items)
     except Exception as e:
         res = str(e)
         traceback.print_exc()
