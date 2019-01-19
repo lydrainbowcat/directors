@@ -162,6 +162,8 @@ def use(role, item, target):
     elif tp <= 7:
         items[item][1] -= 1
         if item.startswith('GPS'):
+            if target == '':
+                return '使用失败，未选择使用目标'
             for k, v in places.items():
                 if v['able'] and target in v['exists']:
                     return k
@@ -170,6 +172,8 @@ def use(role, item, target):
                     return k + ' ' + v['location']
             return '场上无此道具'
         elif item.startswith('望远镜'):
+            if target == '':
+                return '使用失败，未选择使用目标'
             return ' '.join(roles[target]['things']) if len(roles[target]['things']) > 0 else '对方无道具'
         elif item == '电击棒':
             for t in places[role['location']]['exists'][:]:
@@ -177,6 +181,8 @@ def use(role, item, target):
                     roles[t]['able'] = False
             return '使用成功'
         elif item == '绳子':
+            if target == '':
+                return '使用失败，未选择使用目标'
             roles[target]['able'] = False
             return '使用成功'
         else:
@@ -291,6 +297,7 @@ def act_admin(action, params):
             target = params.get('life_target')
             role = roles[target]
             value = int(params.get('life_value'))
+            change_life(role, value)
         elif action == 'strength':
             target = params.get('strength_target')
             value = int(params.get('strength_value'))
@@ -325,6 +332,7 @@ def act_admin(action, params):
             print(places)
             print(roles)
             print(items)
+            print(message.messages)
         elif action == 'drop':
             what = params.get('drop_item')
             where = params.get('drop_place')

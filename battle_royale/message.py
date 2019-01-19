@@ -11,7 +11,6 @@ def add(user, direction, content):
     read_ts = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(ts))
     src = users[user] if direction != 1 else '导演'
     dst = users[user] if direction == 1 else '导演'
-    print(read_ts, src, '->', dst, ': ', content)
     sys.stdout.flush()
     q = messages[user]
     q.append({
