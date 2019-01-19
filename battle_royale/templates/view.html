@@ -1,7 +1,14 @@
 <!doctype html>
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>大逃杀行动提交</title>
-
+<style>
+    input, select {
+        font-size: 15px;
+        margin-left: 2px;
+        margin-right: 2px;
+        padding: 2px;
+    }
+</style>
 <h3>提交行动</h3>
 <p>
     {{ role.name }}，生命：<b style="color:red">{{ role.life }}</b>{% if role.injured > 0 %}（每晚结束减10）{% endif %}，
@@ -20,7 +27,7 @@
         </select> 
     </p>
     <p>
-        <label><input type="radio" name="action" value="search" />搜索</label>
+        <label><input type="radio" name="action" value="search" />搜索{{ role.location }}</label>
     </p>
     <p>
         <label><input type="radio" name="action" value="pick" />捡拾</label>
@@ -35,22 +42,58 @@
             {% for item in role.things %}
             <option value="{{ item }}">{{ item }}</option>
             {% endfor %}
-        </select> 
+        </select>
     </p>
     <p>
+        <script>
+            function showOptions(value) {
+                if (value == "氰化钾" || value == "绳子" || value == "望远镜1" || value == "望远镜2") {
+                    document.getElementById("use_item_target_role").style.display = "inline";
+                } else {
+                    document.getElementById("use_item_target_role").style.display = "none";
+                }
+                if (value == "GPS1" || value == "GPS2") {
+                    document.getElementById("use_item_target_item").style.display = "inline";
+                } else {
+                    document.getElementById("use_item_target_item").style.display = "none";
+                }
+            }
+        </script>
         <label><input type="radio" name="action" value="use" />使用手里的</label>
-        <select name="use_item">
+        <select name="use_item" onChange="showOptions(this.value);">
             <option value="">选择</option>
             {% for item in role.hands %}
             <option value="{{ item }}">{{ item }}</option>
             {% endfor %}
-        </select> 
+        </select>
+        <select name="use_item_target_role" id="use_item_target_role" style="display:none">
+            <option value="">对象</option>
+            {% for role in roles %}
+            <option value="{{ role.name }}">{{ role.name }}</option>
+            {% endfor %}
+        </select>
+        <select name="use_item_target_item" id="use_item_target_item" style="display:none">
+            <option value="">查看</option>
+            {% for item in all_items %}
+            <option value="{{ item }}">{{ item }}</option>
+            {% endfor %}
+        </select>
+    </p>
+    <p>
+        <label><input type="radio" name="action" value="deliver" />传音</label>
+        <select name="deliver_target" id="deliver_target">
+            <option value="">对象</option>
+            {% for role in roles %}
+            <option value="{{ role.name }}">{{ role.name }}</option>
+            {% endfor %}
+        </select>
+        <input type="text" name="deliver_content" placeholder="传音内容" size="30"/>
     </p>
     <p>
         <label><input type="radio" name="action" value="send" />对话导演</label>
         <input type="text" name="content" placeholder="对话内容" size="30"/>
     </p>
-    <p><input type="submit" value="提交" /></p>
+    <p><input type="submit" value="提交" />&nbsp;<input type="reset" value="重置"></p>
 </form>
 
 <h3>历史行动</h3>

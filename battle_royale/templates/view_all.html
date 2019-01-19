@@ -9,6 +9,12 @@
     table {
         border-collapse: collapse;
     }
+    input, select {
+        font-size: 15px;
+        margin-left: 2px;
+        margin-right: 2px;
+        padding: 2px;
+    }
 </style>
 
 <h3>手动操作</h3>
@@ -26,31 +32,31 @@
         <label><input type="radio" name="action" value="end" />结束行动</label>
     </p>
     <p>
+        <label><input type="radio" name="action" value="save" />存盘</label>
+    </p>
+    <p>
+        <label><input type="radio" name="action" value="jump" />跳转到演员视角</label>
+        <input type="text" name="jump_target" placeholder="角色名称" size="10"/>
+    </p>
+    <p>
         <label><input type="radio" name="action" value="life" />加减生命</label>
-        <input type="text" name="life_target" placeholder="对象" size="10"/>
+        <input type="text" name="life_target" placeholder="角色名称" size="10"/>
         <input type="text" name="life_value" placeholder="数值（正/负）" size="10"/>
     </p>
     <p>
         <label><input type="radio" name="action" value="strength" />加减体力</label>
-        <input type="text" name="strength_target" placeholder="对象" size="10"/>
+        <input type="text" name="strength_target" placeholder="角色名称" size="10"/>
         <input type="text" name="strength_value" placeholder="数值（正/负）" size="10"/>
     </p>
     <p>
-        <label><input type="radio" name="action" value="electronic" />电击棒</label>
-        <input type="text" name="electronic_target" placeholder="使用者" size="10"/>
-    </p>
-    <p>
         <label><input type="radio" name="action" value="rope" />捆绑</label>
-        <input type="text" name="rope_target" placeholder="对象" size="10"/>
+        <input type="text" name="rope_target" placeholder="角色名称" size="10"/>
     </p>
     <p>
         <label><input type="radio" name="action" value="unrope" />松绑</label>
-        <input type="text" name="unrope_target" placeholder="对象" size="10"/>
+        <input type="text" name="unrope_target" placeholder="角色名称" size="10"/>
     </p>
-    <p>
-        <label><input type="radio" name="action" value="save" />存盘</label>
-    </p>
-    <p><input type="submit" value="提交" /></p>
+    <p><input type="submit" value="提交" />&nbsp;<input type="reset" value="重置"></p>
 </form>
 
 <h3>当前地点状态</h3>
@@ -67,8 +73,8 @@
 <table>
     {% for role in roles %}
     <tr>
-        <td>{{ role.name }}</td><td>{{ role.location }}</td>
-        <td>{{ role.life }}</td><td>{{ role.strength }}</td>
+        <td>{{ role.name }}</td><td>{{ role.life }}</td>
+        <td>{{ role.strength }}</td><td>{{ role.location }}</td>
         <td>{{ role.hands | join(' ') }}</td>
         <td>{% for item in role.things %}{{ item }}({{ items.get(item, [9, 1])[1] }}次) {% endfor %}</td>
     </tr>

@@ -11,7 +11,8 @@ costs = {
     'pick': 5,
     'attack': 20,
     'equip': 0,
-    'use': 0
+    'use': 0,
+    'deliver': 5
 }
 
 feedbacks = {}
@@ -71,7 +72,7 @@ def be_attacked(source, target, value, ignore_defend=False, continual=False):
         target['able'] = False
         places[target['location']]['exists'].remove(target['name'])
         source['things'] = source['things'] + target['things']
-        return '杀死了' + target['name'] + '，获得全部道具：' + ' '.join(target['things'])
+        return '杀死了' + target['name'] + '，' + ('获得全部道具：' + ' '.join(target['things']) if len(target['things']) > 0 else '对方无道具')
     return ''
 
 def do_attack(role, target):
@@ -89,7 +90,7 @@ def do_attack(role, target):
     else:
         dec = 10
         district = False
-        weapons = list(filter(lambda x: items.get(x, [9, 1])[0] <= 4, role['hands']))
+        weapons = list(filter(lambda x: items.get(x, [9, 1])[0] <= 4 and items.get(x, [9, 1])[1] > 0, role['hands']))
         if len(weapons) > 0:
             weapon = weapons[0]
             items[weapon][1] -= 1
@@ -137,12 +138,60 @@ def equip(role, item):
     role['hands'].append(item)
     return '装备成功'
 
-def use(role, item):
+def change_life(role, value):
+    death = []
+    role['life'] += value
+    if role['life'] <= 0:
+        role['life'] = 0
+        role['able'] = False
+        places[role['location']]['exists'].remove(role['name'])
+        places[role['location']]['exists'] += role['things']
+        death.append(role['name'])
+    message.add(get_id(role['name']), 1, '你的生命值变化了' + str(value))
+    return death
+
+def use(role, item, target):
     if item not in role['hands']:
         return '未装备此道具'
     tp = items.get(item, [9, 1])[0]
+    times = items.get(item, [9, 1])[1]
+    if times <= 0:
+        return '当夜次数已用尽'
     if tp <= 5:
         return '1~5类道具无法使用'
+    elif tp <= 7:
+        items[item][1] -= 1
+        if item.startswith('GPS'):
+            for k, v in places.items():
+                if v['able'] and target in v['exists']:
+                    return k
+            for k, v in roles.items():
+                if target in v['things']:
+                    return k + ' ' + v['location']
+            return '场上无此道具'
+        elif item.startswith('望远镜'):
+            return ' '.join(roles[target]['things']) if len(roles[target]['things']) > 0 else '对方无道具'
+        elif item == '电击棒':
+            for t in places[role['location']]['exists'][:]:
+                if t in roles and t != role['name']:
+                    roles[t]['able'] = False
+            return '使用成功'
+        elif item == '绳子':
+            roles[target]['able'] = False
+            return '使用成功'
+        else:
+            return '扬声器请QQ联系导演，下一日公示'
+    elif tp == 8:
+        death = []
+        if item == '氰化钾':
+            death += change_life(roles[target], -100)
+        elif item == '手榴弹':
+            for t in places[role['location']]['exists'][:]:
+                if t in roles and t != role['name']:
+                    death += change_life(roles[t], -50)
+        role['hands'].remove(item)
+        role['things'].remove(item)
+        return '使用成功。' + ('杀死了' + ' '.join(death) + '，道具散落' if len(death) > 0 else '无人死亡')
     elif tp == 9:
         if item == '矿泉水':
             role['strength'] += 50
@@ -162,8 +211,21 @@ def use(role, item):
         role['hands'].remove(item)
         role['things'].remove(item)
         return '使用成功'
+    return '未定义的道具'
+
+def deliver(role, target, content):
+    res = ''
+    if len(content) > 0 and len(target) > 0:
+        if role['deliver'] == 0:
+            role['deliver'] = 1
+            role['strength'] -= 5
+            message.add(get_id(target), 1, role['name'] + '传音给你：' + content)
+            res = '传音成功'
+        else:
+            res = '传音失败，当夜次数已用尽'
     else:
-        return '6-8类道具请对话导演人工结算'
+        res = '传音失败，无效的对象或消息'
+    return res
 
 def act(role, action, params):
     global living
@@ -183,8 +245,8 @@ def act(role, action, params):
             msg = '演员试图行动'
             res = '体力不足'
         elif action == 'move':
-            msg = '移动' + params[0]
-            res = move(role, params[0])
+            msg = '移动' + params.get('move_to', '')
+            res = move(role, params.get('move_to', ''))
         elif action == 'search':
             msg = '搜索'
             res = search(role)
@@ -195,11 +257,25 @@ def act(role, action, params):
             msg = '攻击'
             res = attack(role)
         elif action == 'equip':
-            msg = '装备' + params[1]
-            res = equip(role, params[1])
+            msg = '装备' + params.get('equip_item', '')
+            res = equip(role, params.get('equip_item', ''))
         elif action == 'use':
-            msg = '使用' + params[2]
-            res = use(role, params[2])
+            msg = '使用' + params.get('use_item', '')
+            target = ''
+            target_role = params.get('use_item_target_role', '')
+            if target_role != '':
+                msg += '，目标' + target_role
+                target = target_role
+            target_item = params.get('use_item_target_item', '')
+            if target_item != '':
+                msg += '，查看' + target_item
+                target = target_item
+            res = use(role, params.get('use_item', ''), target)
+        elif action == 'deliver':
+            target = params.get('deliver_target', '')
+            content = params.get('deliver_content', '')
+            msg = '传音' + target + '：' + content
+            res = deliver(role, target, content)
     except Exception as e:
         res = str(e)
         traceback.print_exc()
@@ -209,40 +285,42 @@ def act(role, action, params):
 def act_admin(action, params):
     global living
     res = ''
+    mutex.acquire()
     try:
         if action == 'life':
             target = params.get('life_target')
             role = roles[target]
             value = int(params.get('life_value'))
-            role['life'] += value
-            if role['life'] <= 0:
-                role['life'] = 0
-                role['able'] = False
-                places[role['location']]['exists'].remove(target)
-                places[role['location']]['exists'] += role['things']
         elif action == 'strength':
             target = params.get('strength_target')
-            role = roles[target]
             value = int(params.get('strength_value'))
             roles[target]['strength'] += value
-        elif action == 'electronic':
-            target = params.get('electronic_target')
-            role = roles[target]
-            for t in places[role['location']]['exists'][:]:
-                if t in roles and t != target:
-                    roles[t]['able'] = False
         elif action == 'rope':
             target = params.get('rope_target')
-            role = roles[target]
             roles[target]['able'] = False
         elif action == 'unrope':
             target = params.get('unrope_target')
-            role = roles[target]
             roles[target]['able'] = True
         elif action == 'start':
             living = True
         elif action == 'end':
             living = False
+            for k, v in roles.items():
+                if v['life'] > 0 and v['life'] <= 100:
+                    v['able'] = True
+                    v['deliver'] = 0
+                    v['strength'] += 50
+                    if v['strength'] > 100:
+                        v['strength'] = 100
+                    if v['injured']:
+                        change_life(v, -10)
+            items['GPS1'][1] = 1
+            items['GPS2'][1] = 1
+            items['望远镜1'][1] = 2
+            items['望远镜2'][1] = 2
+            items['绳子'][1] = 1
+            items['电击棒'][1] = 1
+            items['扬声器'][1] = 1
         elif action == 'save':
             print(places)
             print(roles)
@@ -250,3 +328,4 @@ def act_admin(action, params):
     except Exception as e:
         res = str(e)
         traceback.print_exc()
+    mutex.release()

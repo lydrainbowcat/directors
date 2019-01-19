@@ -1,7 +1,7 @@
 from flask import Flask
 from flask import request, redirect, url_for, render_template
 from user import users, encrypt, decrypt, is_director, has_user, get_id
-from data import roles, places, alive_roles, enabled_places, items
+from data import roles, places, alive_roles, enabled_places, items, all_items
 from action import act, act_admin
 import message
 
@@ -37,8 +37,8 @@ def view_messages(key):
     else:
         messages = message.get(user)
         role = roles[users[user]]
-        return render_template('view.html', messages=messages, send_url='/api/send/'+key,
-                               role=role, places=enabled_places(), items=items)
+        return render_template('view.html', messages=messages, send_url='/api/send/'+key, role=role,
+                               roles=alive_roles(), places=enabled_places(), items=items, all_items=all_items())
 
 @app.route('/api/send/<key>', methods=['POST'])
 def send_message(key):
@@ -52,11 +52,7 @@ def send_message(key):
     action = request.form.get('action', '')
     if action != 'send':
         role = roles[users[user]]
-        params = []
-        params.append(request.form.get('move_to', ''))
-        params.append(request.form.get('equip_item', ''))
-        params.append(request.form.get('use_item', ''))
-        content = act(role, action, params)
+        content = act(role, action, request.form)
         message.add(user, 2, content)
     else:
         content = request.form.get('content', '')
@@ -78,5 +74,7 @@ def admin_action(key):
         return redirect(url_for('index'))
     
     action = request.form.get('action', '')
+    if action == 'jump':
+        return redirect(url_for('view_messages', key=encrypt(get_id(request.form.get('jump_target', '')))))
     act_admin(action, request.form)
     return redirect(url_for('view_messages', key=key))

@@ -74,7 +74,7 @@ roles = {
     '天堂真弓': { 'order': 32, 'life': 100, 'strength': 85, 'hands': [], 'things': [], 'location': '医院西', 'able': True },
     '清水比吕乃': { 'order': 33, 'life': 30, 'injured': 10, 'strength': 100, 'hands': ['扬声器'], 'things': ['扬声器', '望远镜2'], 'location': '医院北', 'able': True },
     '旗上忠胜': { 'order': 34, 'life': 60, 'strength': 100, 'hands': ['日本刀'], 'things': ['日本刀'], 'location': '树林北', 'able': True },
-    '千草贵子': { 'order': 35, 'life': 70, 'strength': 75, 'hands': ['霰弹枪', '矿泉水'], 'things': ['霰弹枪', '矿泉水'], 'location': '医院西', 'able': True },
+    '千草贵子': { 'order': 35, 'life': 70, 'strength': 80, 'hands': ['霰弹枪', '矿泉水'], 'things': ['霰弹枪', '矿泉水'], 'location': '医院西', 'able': True },
     '七原秋也': { 'order': 36, 'life': 0, 'strength': 100, 'hands': [], 'things': [], 'location': '出局', 'able': False },
     '江藤惠': { 'order': 37, 'life': 0, 'strength': 100, 'location': '出局', 'things': [], 'hands': [], 'able': False },
     '桐山和雄': { 'order': 38, 'life': 100, 'strength': 60, 'hands': ['手枪3', '防弹衣'], 'things': ['手枪3', '绷带', '防弹衣'], 'location': '学校东', 'able': True },
@@ -85,7 +85,7 @@ roles = {
 }
 
 items = {
-    '霰弹枪': [1,2],
+    '霰弹枪': [1,3],
     '冲锋枪': [1,3],
     '狙击枪': [2,5],
     '步枪': [2,0],
@@ -107,8 +107,8 @@ items = {
     '防弹衣': [5,100],
     'GPS1': [6,1],
     'GPS2': [6,1],
-    '望远镜1': [6,1],
-    '望远镜2': [6,1],
+    '望远镜1': [6,2],
+    '望远镜2': [6,2],
     '绳子': [7,1],
     '电击棒': [7,1],
     '扬声器': [7,1],
@@ -122,6 +122,7 @@ for k, v in places.items():
 for k, v in roles.items():
     v['name'] = k
     v['injured'] = v.get('injured', 0)
+    v['deliver'] = v.get('deliver', 0)
     if v['able']:
         places[v['location']]['exists'].append(k)
 
@@ -134,3 +135,6 @@ def enabled_places():
     res = [v for k, v in places.items() if v['able']]
     res.sort(key=lambda x: x['order'])
     return res
+
+def all_items():
+    return list(items.keys()) + ['急救包', '绷带', '矿泉水']
