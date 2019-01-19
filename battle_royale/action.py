@@ -325,6 +325,14 @@ def act_admin(action, params):
             print(places)
             print(roles)
             print(items)
+        elif action == 'drop':
+            what = params.get('drop_item')
+            where = params.get('drop_place')
+            places[where]['exists'].append(what)
+        elif action == 'destroy':
+            target = params.get('destroy_place')
+            places[target]['able'] = False
+            places[target]['exists'] = []
     except Exception as e:
         res = str(e)
         traceback.print_exc()
