@@ -37,7 +37,7 @@ def view_messages(key):
     else:
         messages = message.get(user)
         role = roles[users[user]]
-        return render_template('view.html', messages=messages, send_url='/api/send/'+key, role=role,
+        return render_template('view.html', messages=messages, send_url='/api/send/'+key, role=role, all_roles=roles.keys(),
                                roles=alive_roles(), places=enabled_places(), items=items, all_items=all_items())
 
 @app.route('/api/send/<key>', methods=['POST'])

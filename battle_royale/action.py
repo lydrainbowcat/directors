@@ -72,7 +72,10 @@ def be_attacked(source, target, value, ignore_defend=False, continual=False):
         target['able'] = False
         places[target['location']]['exists'].remove(target['name'])
         source['things'] = source['things'] + target['things']
-        return '杀死了' + target['name'] + '，' + ('获得全部道具：' + ' '.join(target['things']) if len(target['things']) > 0 else '对方无道具')
+        ret = '杀死了' + target['name'] + '，' + ('获得全部道具：' + ' '.join(target['things']) if len(target['things']) > 0 else '对方无道具')
+        target['things'] = []
+        target['hands'] = []
+        return ret
     return ''
 
 def do_attack(role, target):
@@ -122,6 +125,8 @@ def attack(role):
     if fb == '' or fb not in roles or fb not in place['exists']:
         return '攻击失败'
     target = roles[fb]
+    if target['life'] <= 0 or target['life'] > 100:
+        return '请勿鞭尸'
     res = do_attack(role, target)
     role['strength'] -= costs['attack']
     return res
@@ -146,6 +151,8 @@ def change_life(role, value):
         role['able'] = False
         places[role['location']]['exists'].remove(role['name'])
         places[role['location']]['exists'] += role['things']
+        role['hands'] = []
+        role['things'] = []
         death.append(role['name'])
     message.add(get_id(role['name']), 1, '你的生命值变化了' + str(value))
     return death
@@ -221,7 +228,7 @@ def use(role, item, target):
 
 def deliver(role, target, content):
     res = ''
-    if len(content) > 0 and len(target) > 0:
+    if len(content) > 0 and len(target) > 0 or target not in roles:
         if role['deliver'] == 0:
             role['deliver'] = 1
             role['strength'] -= 5
