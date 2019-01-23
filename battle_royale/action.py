@@ -165,7 +165,7 @@ def use(role, item, target):
     if times <= 0:
         return '当夜次数已用尽'
     if tp <= 5:
-        return '1~5类道具无法使用'
+        return '1~5类道具无需使用，拿在手里以后，直接搜索、攻击即可'
     elif tp <= 7:
         items[item][1] -= 1
         if item.startswith('GPS'):
