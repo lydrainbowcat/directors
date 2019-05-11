@@ -9,7 +9,7 @@ costs = {
     'move': 5,
     'search': 10,
     'pick': 5,
-    'attack': 20,
+    'attack': 10,
     'equip': 0,
     'use': 0,
     'deliver': 5
@@ -59,9 +59,9 @@ def pick(role):
 
 def be_attacked(source, target, value, ignore_defend=False, continual=False):
     if not ignore_defend:
-        if '锅盖' in target['hands']:
+        if set(['刃甲', '锁子甲', '板甲', '圆盾']) & set(target['hands']):
             value -= 10
-        if '防弹衣' in target['hands']:
+        if '先锋盾' in target['hands']:
             value //= 2
     if continual:
         target['injured'] = 10
@@ -80,16 +80,22 @@ def be_attacked(source, target, value, ignore_defend=False, continual=False):
 
 def do_attack(role, target):
     res = []
-    if '手榴弹' in role['hands']:
+    if '黯灭' in role['hands']:
         for t in places[role['location']]['exists'][:]:
             if t in roles and t != role['name']:
                 res.append(be_attacked(role, roles[t], 60, ignore_defend=True))
-        role['hands'].remove('手榴弹')
-        role['things'].remove('手榴弹')
-    elif '氰化钾' in role['hands']:
+        role['hands'].remove('黯灭')
+        role['things'].remove('黯灭')
+    elif '漩涡' in role['hands']:
+        for t in places[role['location']]['exists'][:]:
+            if t in roles and t != role['name']:
+                res.append(be_attacked(role, roles[t], 60, ignore_defend=True))
+        role['hands'].remove('漩涡')
+        role['things'].remove('漩涡')
+    elif '圣者遗物' in role['hands']:
         res.append(be_attacked(role, target, 110, ignore_defend=True))
-        role['hands'].remove('氰化钾')
-        role['things'].remove('氰化钾')
+        role['hands'].remove('圣者遗物')
+        role['things'].remove('圣者遗物')
     else:
         dec = 10
         district = False
@@ -101,14 +107,14 @@ def do_attack(role, target):
                 role['hands'].remove(weapon)
                 role['things'].remove(weapon)
             if items[weapon][0] == 1:
-                dec += 50
+                dec += 40
                 district = True
             elif items[weapon][0] == 2:
-                dec += 100
+                dec += 80
             elif items[weapon][0] == 3:
-                dec += 50
+                dec += 40
             else:
-                dec += 30
+                dec += 20
         if district:
             for t in places[role['location']]['exists'][:]:
                 if t in roles and t != role['name']:
@@ -168,7 +174,7 @@ def use(role, item, target):
         return '1~5类道具无需使用，拿在手里以后，直接搜索、攻击即可'
     elif tp <= 7:
         items[item][1] -= 1
-        if item.startswith('GPS'):
+        if item in ['慧光', '银月之晶']:
             if target == '':
                 return '使用失败，未选择使用目标'
             for k, v in places.items():
@@ -178,27 +184,22 @@ def use(role, item, target):
                 if target in v['things']:
                     return k + ' ' + v['location']
             return '场上无此道具'
-        elif item.startswith('望远镜'):
+        elif item in ['刷新球', '坚韧球']:
             if target == '':
                 return '使用失败，未选择使用目标'
             return ' '.join(roles[target]['things']) if len(roles[target]['things']) > 0 else '对方无道具'
-        elif item == '电击棒':
+        elif item == '王冠':
             for t in places[role['location']]['exists'][:]:
                 if t in roles and t != role['name']:
                     roles[t]['able'] = False
             return '使用成功'
-        elif item == '绳子':
-            if target == '':
-                return '使用失败，未选择使用目标'
-            roles[target]['able'] = False
-            return '使用成功'
         else:
-            return '扬声器请QQ联系导演，下一日公示'
+            return '极限法球请QQ联系导演，下一日公示'
     elif tp == 8:
         death = []
-        if item == '氰化钾':
+        if item == '圣者遗物':
             death += change_life(roles[target], -100)
-        elif item == '手榴弹':
+        elif item in ['黯灭', '漩涡']:
             for t in places[role['location']]['exists'][:]:
                 if t in roles and t != role['name']:
                     death += change_life(roles[t], -50)
@@ -206,21 +207,29 @@ def use(role, item, target):
         role['things'].remove(item)
         return '使用成功。' + ('杀死了' + ' '.join(death) + '，道具散落' if len(death) > 0 else '无人死亡')
     elif tp == 9:
-        if item == '矿泉水':
+        if item == '虚无宝石':
             role['strength'] += 50
             if role['strength'] > 100:
                 role['strength'] = 100
-        elif item == '绷带':
+        elif item == '振奋宝石':
+            role['strength'] = 100
+        elif item == '回复指环':
             if role['injured'] > 0:
                 role['injured'] = 0
             else:
                 role['life'] += 10
                 if role['life'] > 100:
                     role['life'] = 100
-        elif item == '急救包':
-            role['life'] += 50
-            if role['life'] > 100:
-                role['life'] = 100
+        elif item == '治疗指环':
+            if role['injured'] > 0:
+                role['injured'] = 0
+            else:
+                role['life'] += 30
+                if role['life'] > 100:
+                    role['life'] = 100
+        elif item == '恐鳖之心':
+            role['injured'] = 0
+            role['life'] = 100
         role['hands'].remove(item)
         role['things'].remove(item)
         return '使用成功'
@@ -328,13 +337,12 @@ def act_admin(action, params):
                         v['strength'] = 100
                     if v['injured']:
                         change_life(v, -10)
-            items['GPS1'][1] = 1
-            items['GPS2'][1] = 1
-            items['望远镜1'][1] = 2
-            items['望远镜2'][1] = 2
-            items['绳子'][1] = 1
-            items['电击棒'][1] = 1
-            items['扬声器'][1] = 1
+            items['慧光'][1] = 1
+            items['银月之晶'][1] = 1
+            items['刷新球'][1] = 2
+            items['坚韧球'][1] = 2
+            items['王冠'][1] = 1
+            items['极限法球'][1] = 1
         elif action == 'save':
             print(places)
             print(roles)
