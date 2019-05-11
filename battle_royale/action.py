@@ -348,6 +348,28 @@ def act_admin(action, params):
             target = params.get('destroy_place')
             places[target]['able'] = False
             places[target]['exists'] = []
+        elif action == 'move':
+            who = params.get('move_target')
+            where = params.get('move_place')
+            try:
+                dst = places[where]
+                src = places[roles[who]['location']]
+                roles[who]['location'] = where
+                src['exists'].remove(who)
+                dst['exists'].append(who)
+            except:
+                pass
+        elif action == 'give':
+            who = params.get('give_target')
+            what = params.get('give_item')
+            try:
+                if what in roles[who]['things']:
+                    roles[who]['things'].remove(what)
+                    roles[who]['hands'].remove(what)
+                else:
+                    roles[who]['things'].append(what)
+            except:
+                pass
     except Exception as e:
         res = str(e)
         traceback.print_exc()
