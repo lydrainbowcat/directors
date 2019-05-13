@@ -54,6 +54,14 @@ def pick(role):
     place = places[role['location']]
     if fb == '' or fb in roles or fb not in place['exists']:
         return '捡拾失败'
+    sort14 = len(list(filter(lambda x: x in items and items[x][0] <= 4, role['things'])))
+    sort59 = len(list(filter(lambda x: x not in items or items[x][0] >= 5, role['things'])))
+    if sort14 >= 2 and (fb in items and items[fb][0] <= 4):
+        feedbacks[role['name']] = fb
+        return '最多拥有2件武器，请丢弃一件现有武器后重新捡拾'
+    if sort59 >= 4 and (fb not in items or items[fb][0] >= 5):
+        feedbacks[role['name']] = fb
+        return '最多拥有4件非武器类道具，请丢弃一件后重新捡拾'
     place['exists'].remove(fb)
     role['things'].append(fb)
     role['strength'] -= costs['pick']
