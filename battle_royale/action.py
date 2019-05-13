@@ -271,9 +271,9 @@ def act(role, action, params):
         return '你被禁止行动'
     if cost > role['strength']:
         return '体力不足'
-    if action in ['move', 'search', 'pick', 'attack', 'use']:
-        if time.time() - role['ts'] < 15:
-            return '移动、搜索、捡拾、攻击、使用行动之间需间隔15秒'
+    if action in ['search']:
+        if time.time() - role['ts'] < 30:
+            return '两次搜索之间需间隔30秒'
         role['ts'] = time.time()
     mutex.acquire()
     msg = ''
