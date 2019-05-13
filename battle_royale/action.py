@@ -1,6 +1,7 @@
 import threading
 import random
 import traceback
+import time
 from data import roles, places, items
 from user import get_id
 import message
@@ -256,17 +257,19 @@ def act(role, action, params):
     cost = costs.get(action, -1)
     if cost < 0:
         return '未定义的行动'
+    if not role['able']:
+        return '你被禁止行动'
+    if cost > role['strength']:
+        return '体力不足'
+    if action in ['move', 'search', 'pick', 'attack', 'use']:
+        if time.time() - role['ts'] < 15:
+            return '移动、搜索、捡拾、攻击、使用行动之间需间隔15秒'
+        role['ts'] = time.time()
     mutex.acquire()
     msg = ''
     res = ''
     try:
-        if not role['able']:
-            msg = '演员试图行动'
-            res = '你被禁止行动'
-        elif cost > role['strength']:
-            msg = '演员试图行动'
-            res = '体力不足'
-        elif action == 'move':
+        if action == 'move':
             msg = '移动' + params.get('move_to', '')
             res = move(role, params.get('move_to', ''))
         elif action == 'search':
