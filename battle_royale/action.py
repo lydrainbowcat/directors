@@ -13,6 +13,7 @@ costs = {
     'attack': 10,
     'equip': 0,
     'use': 0,
+    'throw': 0,
     'deliver': 5
 }
 
@@ -236,6 +237,15 @@ def use(role, item, target):
         return '使用成功'
     return '未定义的道具'
 
+def throw(role, item):
+    if item not in role['things']:
+        return '无此道具'
+    role['things'].remove(item)
+    if item in role['hands']:
+        role['hands'].remove(item)
+    places[role['location']]['exists'].append(item)
+    return '已丢弃在原地'
+
 def deliver(role, target, content):
     res = ''
     if len(content) > 0 and len(target) > 0 or target not in roles:
@@ -296,6 +306,9 @@ def act(role, action, params):
                 msg += '，查看' + target_item
                 target = target_item
             res = use(role, params.get('use_item', ''), target)
+        elif action == 'throw':
+            msg = '丢弃' + params.get('throw_item', '')
+            res = throw(role, params.get('throw_item', ''))
         elif action == 'deliver':
             target = params.get('deliver_target', '')
             content = params.get('deliver_content', '')

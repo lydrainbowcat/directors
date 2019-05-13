@@ -80,6 +80,15 @@
         </select>
     </p>
     <p>
+        <label><input type="radio" name="action" value="throw" />丢弃在原地</label>
+        <select name="throw_item">
+            <option value="">选择</option>
+            {% for item in role.things %}
+            <option value="{{ item }}">{{ item }}</option>
+            {% endfor %}
+        </select>
+    </p>
+    <p>
         <label><input type="radio" name="action" value="deliver" />传音</label>
         <select name="deliver_target" id="deliver_target">
             <option value="">对象</option>
