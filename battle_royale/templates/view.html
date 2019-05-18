@@ -17,6 +17,17 @@
     背包道具：{% for item in role.things %}{{ item }}({{ items.get(item, [9, 1])[1] }}次) {% endfor %}
 </p>
 <form action="{{ send_url }}" method="POST">
+    {% if role.location == '' %}
+    <p>
+        <label><input type="radio" name="action" value="born" />出生</label>
+        <select name="born_in">
+            <option value="">选择</option>
+            {% for place in places %}
+            <option value="{{ place.name }}">{{ place.name }}</option>
+            {% endfor %}
+        </select> 
+    </p>
+    {% else %}
     <p>
         <label><input type="radio" name="action" value="move" />移动到</label>
         <select name="move_to">
@@ -27,7 +38,23 @@
         </select> 
     </p>
     <p>
-        <label><input type="radio" name="action" value="search" />搜索{{ role.location }}</label>
+        <label>
+            <input type="radio" name="action" value="search" />搜索{{ role.location }}，
+            <span id="search_second">0</span> 秒后可再次搜索
+            <span id="search_ts" style="display:none">{{ role.ts }}</span>
+        </label>
+        <script>
+            function updateSearchSecond() {
+                const left = Math.floor(Date.now() / 1000) - parseInt(document.getElementById("search_ts").innerText);
+                if (left <= 30) {
+                    document.getElementById("search_second").innerText = (30 - left).toString();
+                    setTimeout(updateSearchSecond, 1000);
+                } else {
+                    document.getElementById("search_second").innerText = "0";
+                }
+            }
+            setTimeout(updateSearchSecond, 0);
+        </script>
     </p>
     <p>
         <label><input type="radio" name="action" value="pick" />捡拾</label>
@@ -100,6 +127,7 @@
         </select>
         <input type="text" name="deliver_content" placeholder="传音内容" size="30"/>
     </p>
+    {% endif %}
     <p>
         <label><input type="radio" name="action" value="send" />对话导演</label>
         <input type="text" name="content" placeholder="对话内容" size="30"/>

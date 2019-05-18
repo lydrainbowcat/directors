@@ -268,7 +268,21 @@ def deliver(role, target, content):
         res = '传音失败，无效的对象或消息'
     return res
 
+def born(role, place):
+    if role['location'] == '' and place in places:
+        role['location'] = place
+        try:
+            places[place]['exists'].remove(role['name'])
+        except:
+            pass
+        places[place]['exists'].append(role['name'])
+        return '成功出生在' + place
+    else:
+        return '你已经选择过出生地，或所选地点不存在'
+
 def act(role, action, params):
+    if action == 'born':
+        return born(role, params.get('born_in', ''))
     global living
     if not living:
         return '行动未开始'
