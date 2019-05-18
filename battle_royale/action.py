@@ -416,6 +416,10 @@ def act_admin(action, params):
                     roles[who]['things'].append(what)
             except:
                 pass
+        elif action == 'born':
+            for role in roles.values():
+                if role['location'] == '':
+                    born(role, random.choice(list(places.keys())))
     except Exception as e:
         res = str(e)
         traceback.print_exc()
