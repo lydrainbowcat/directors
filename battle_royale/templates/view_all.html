@@ -39,6 +39,19 @@
         <input type="text" name="jump_target" placeholder="角色名称" size="10"/>
     </p>
     <p>
+        <label><input type="radio" name="action" value="vote" />缴械</label>
+        <input type="text" name="vote_target" placeholder="角色名称" size="10"/>
+    </p>
+    <p>
+        <label><input type="radio" name="action" value="destroy" />缩圈</label>
+        <input type="text" name="destroy_place" placeholder="区域" size="10"/>
+    </p>
+    <p>
+        <label><input type="radio" name="action" value="drop" />空投</label>
+        <input type="text" name="drop_item" placeholder="道具" size="10"/>
+        <input type="text" name="drop_place" placeholder="区域" size="10"/>
+    </p>
+    <p>
         <label><input type="radio" name="action" value="life" />加减生命</label>
         <input type="text" name="life_target" placeholder="角色名称" size="10"/>
         <input type="text" name="life_value" placeholder="数值（正/负）" size="10"/>
@@ -59,24 +72,15 @@
         <input type="text" name="give_item" placeholder="道具名称" size="10"/>
     </p>
     <p>
-        <label><input type="radio" name="action" value="rope" />捆绑</label>
+        <label><input type="radio" name="action" value="born" />随机出生</label>
+    </p>
+    <p>
+        <label><input type="radio" name="action" value="rope" />捆绑（禁止行动）</label>
         <input type="text" name="rope_target" placeholder="角色名称" size="10"/>
     </p>
     <p>
-        <label><input type="radio" name="action" value="unrope" />松绑</label>
+        <label><input type="radio" name="action" value="unrope" />松绑（取消禁令）</label>
         <input type="text" name="unrope_target" placeholder="角色名称" size="10"/>
-    </p>
-    <p>
-        <label><input type="radio" name="action" value="drop" />空投</label>
-        <input type="text" name="drop_item" placeholder="道具" size="10"/>
-        <input type="text" name="drop_place" placeholder="区域" size="10"/>
-    </p>
-    <p>
-        <label><input type="radio" name="action" value="destroy" />缩圈</label>
-        <input type="text" name="destroy_place" placeholder="区域" size="10"/>
-    </p>
-    <p>
-        <label><input type="radio" name="action" value="born" />随机出生</label>
     </p>
     <p><input type="submit" value="提交" />&nbsp;<input type="reset" value="重置"></p>
 </form>

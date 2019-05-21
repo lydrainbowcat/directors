@@ -48,18 +48,26 @@ def search(role):
     role['strength'] -= costs['search']
     return res
 
+def can_pick(role, fb):
+    sort14 = len(list(filter(lambda x: x in items and items[x][0] <= 4, role['things'])))
+    sort59 = len(list(filter(lambda x: x not in items or items[x][0] >= 5, role['things'])))
+    if sort14 >= 2 and (fb in items and items[fb][0] <= 4):
+        return 1 # 武器过多
+    if sort59 >= 4 and (fb not in items or items[fb][0] >= 5):
+        return 2 # 非武器类道具过多
+    return 0 # OK
+
 def pick(role):
     fb = feedbacks.get(role['name'], '')
     feedbacks[role['name']] = ''
     place = places[role['location']]
     if fb == '' or fb in roles or fb not in place['exists']:
         return '捡拾失败'
-    sort14 = len(list(filter(lambda x: x in items and items[x][0] <= 4, role['things'])))
-    sort59 = len(list(filter(lambda x: x not in items or items[x][0] >= 5, role['things'])))
-    if sort14 >= 2 and (fb in items and items[fb][0] <= 4):
+    validation = can_pick(role, fb)
+    if validation == 1:
         feedbacks[role['name']] = fb
         return '最多拥有2件武器，请丢弃一件现有武器后重新捡拾'
-    if sort59 >= 4 and (fb not in items or items[fb][0] >= 5):
+    if validation == 2:
         feedbacks[role['name']] = fb
         return '最多拥有4件非武器类道具，请丢弃一件后重新捡拾'
     place['exists'].remove(fb)
@@ -81,8 +89,25 @@ def be_attacked(source, target, value, ignore_defend=False, continual=False):
         target['life'] = 0
         target['able'] = False
         places[target['location']]['exists'].remove(target['name'])
-        source['things'] = source['things'] + target['things']
-        ret = '杀死了' + target['name'] + '，' + ('获得全部道具：' + ' '.join(target['things']) if len(target['things']) > 0 else '对方无道具')
+        random.shuffle(target['things'])
+        gain = []
+        drop = []
+        for fb in target['things']:
+            if can_pick(source, fb) == 0:
+                gain.append(fb)
+                source['things'].append(fb)
+            else:
+                drop.append(fb)
+                places[target['location']]['exists'].append(fb)
+        ret = '杀死了' + target['name'] + '，'
+        if len(gain) > 0 and len(drop) == 0:
+            ret += '获得全部道具：' + ' '.join(gain)
+        elif len(gain) > 0 and len(drop) > 0:
+            ret += '获得道具：' + ' '.join(gain) + '，原地掉落道具：' + ' '.join(drop)
+        elif len(gain) == 0 and len(drop) > 0:
+            ret += '背包已满，原地掉落道具：' + ' '.join(drop)
+        else:
+            ret += '对方无道具'
         target['things'] = []
         target['hands'] = []
         return ret
@@ -162,6 +187,8 @@ def equip(role, item):
 def change_life(role, value):
     death = []
     role['life'] += value
+    if role['life'] > 100:
+        role['life'] = 100
     if role['life'] <= 0:
         role['life'] = 0
         role['able'] = False
@@ -420,6 +447,11 @@ def act_admin(action, params):
             for role in roles.values():
                 if role['location'] == '':
                     born(role, random.choice(list(places.keys())))
+        elif action == 'vote':
+            vote = params.get('vote_target')
+            places[roles[vote]['location']]['exists'] += roles[vote]['things']
+            roles[vote]['things'] = []
+            roles[vote]['hands'] = []
     except Exception as e:
         res = str(e)
         traceback.print_exc()
