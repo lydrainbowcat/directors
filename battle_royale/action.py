@@ -4,21 +4,10 @@ import traceback
 import time
 from data import roles, places, items
 from user import get_id
+from constants import *
 import message
 
-costs = {
-    'move': 5,
-    'search': 10,
-    'pick': 5,
-    'attack': 10,
-    'equip': 0,
-    'use': 0,
-    'throw': 0,
-    'deliver': 5
-}
-
 feedbacks = {}
-
 mutex = threading.Lock()
 living = False
 
@@ -34,18 +23,18 @@ def move(role, to):
     role['location'] = to
     src['exists'].remove(role['name'])
     dst['exists'].append(role['name'])
-    role['strength'] -= costs['move']
+    role['strength'] -= COSTS[MOVE]
     return '移动成功'
 
 def search(role):
     feedbacks[role['name']] = ''
     place = places[role['location']]
     if len(place['exists']) == 1:
-        role['strength'] -= costs['search']
+        role['strength'] -= COSTS[SEARCH]
         return '空'
     res = random.choice(list(filter(lambda x: x != role['name'], place['exists'])))
     feedbacks[role['name']] = res
-    role['strength'] -= costs['search']
+    role['strength'] -= COSTS[SEARCH]
     return res
 
 def can_pick(role, fb):
@@ -72,14 +61,14 @@ def pick(role):
         return '最多拥有4件非武器类道具，请丢弃一件后重新捡拾'
     place['exists'].remove(fb)
     role['things'].append(fb)
-    role['strength'] -= costs['pick']
+    role['strength'] -= COSTS[PICK]
     return '捡拾成功'
 
 def be_attacked(source, target, value, ignore_defend=False, continual=False):
     if not ignore_defend:
-        if set(['刃甲', '锁子甲', '板甲', '圆盾']) & set(target['hands']):
+        if set(ITEM_PROTECT) & set(target['hands']):
             value -= 10
-        if '先锋盾' in target['hands']:
+        if set(ITEM_ENSURE) & set(target['hands']):
             value //= 2
     if continual:
         target['injured'] = 10
@@ -115,22 +104,22 @@ def be_attacked(source, target, value, ignore_defend=False, continual=False):
 
 def do_attack(role, target):
     res = []
-    if '黯灭' in role['hands']:
-        for t in places[role['location']]['exists'][:]:
-            if t in roles and t != role['name']:
-                res.append(be_attacked(role, roles[t], 60, ignore_defend=True))
-        role['hands'].remove('黯灭')
-        role['things'].remove('黯灭')
-    elif '漩涡' in role['hands']:
-        for t in places[role['location']]['exists'][:]:
-            if t in roles and t != role['name']:
-                res.append(be_attacked(role, roles[t], 60, ignore_defend=True))
-        role['hands'].remove('漩涡')
-        role['things'].remove('漩涡')
-    elif '圣者遗物' in role['hands']:
-        res.append(be_attacked(role, target, 110, ignore_defend=True))
-        role['hands'].remove('圣者遗物')
-        role['things'].remove('圣者遗物')
+    if set(ITEM_BOMB) & set(role['hands']):
+        for bomb in ITEM_BOMB:
+            if bomb in role['hands']:
+                for t in places[role['location']]['exists'][:]:
+                    if t in roles and t != role['name']:
+                        res.append(be_attacked(role, roles[t], 60, ignore_defend=True))
+                role['hands'].remove(bomb)
+                role['things'].remove(bomb)
+                break
+    elif set(ITEM_KILL) & set(role['hands']):
+        for kill in ITEM_KILL:
+            if kill in role['hands']:
+                res.append(be_attacked(role, target, 110, ignore_defend=True))
+                role['hands'].remove(kill)
+                role['things'].remove(kill)
+                break
     else:
         dec = 10
         district = False
@@ -142,14 +131,14 @@ def do_attack(role, target):
                 role['hands'].remove(weapon)
                 role['things'].remove(weapon)
             if items[weapon][0] == 1:
-                dec += 40
+                dec += ITEM_HOT_AOE_DAMAGE
                 district = True
             elif items[weapon][0] == 2:
-                dec += 80
+                dec += ITEM_HOT_VITAL_DAMAGE
             elif items[weapon][0] == 3:
-                dec += 40
+                dec += ITEM_HOT_DAMAGE
             else:
-                dec += 20
+                dec += ITEM_COLD_DAMAGE
         if district:
             for t in places[role['location']]['exists'][:]:
                 if t in roles and t != role['name']:
@@ -169,7 +158,7 @@ def attack(role):
     if target['life'] <= 0 or target['life'] > 100:
         return '请勿鞭尸'
     res = do_attack(role, target)
-    role['strength'] -= costs['attack']
+    role['strength'] -= COSTS[ATTACK]
     return res
 
 def is_same_type(item1, item2):
@@ -211,7 +200,7 @@ def use(role, item, target):
         return '1~5类道具无需使用，拿在手里以后，直接搜索、攻击即可'
     elif tp <= 7:
         items[item][1] -= 1
-        if item in ['慧光', '银月之晶']:
+        if item in ITEM_LOCATOR:
             if target == '':
                 return '使用失败，未选择使用目标'
             for k, v in places.items():
@@ -221,22 +210,22 @@ def use(role, item, target):
                 if target in v['things']:
                     return k + ' ' + v['location']
             return '场上无此道具'
-        elif item in ['刷新球', '坚韧球']:
+        elif item in ITEM_TELESCOPE:
             if target == '':
                 return '使用失败，未选择使用目标'
             return ' '.join(roles[target]['things']) if len(roles[target]['things']) > 0 else '对方无道具'
-        elif item == '王冠':
+        elif item in ITEM_LOCK:
             for t in places[role['location']]['exists'][:]:
                 if t in roles and t != role['name']:
                     roles[t]['able'] = False
             return '使用成功'
         else:
-            return '极限法球请QQ联系导演，下一日公示'
+            return item + '请QQ联系导演，下一日公示'
     elif tp == 8:
         death = []
-        if item == '圣者遗物':
+        if item in ITEM_KILL:
             death += change_life(roles[target], -100)
-        elif item in ['黯灭', '漩涡']:
+        elif item in ITEM_BOMB:
             for t in places[role['location']]['exists'][:]:
                 if t in roles and t != role['name']:
                     death += change_life(roles[t], -50)
@@ -244,27 +233,27 @@ def use(role, item, target):
         role['things'].remove(item)
         return '使用成功。' + ('杀死了' + ' '.join(death) + '，道具散落' if len(death) > 0 else '无人死亡')
     elif tp == 9:
-        if item == '虚无宝石':
+        if item in ITEM_WATER:
             role['strength'] += 50
             if role['strength'] > 100:
                 role['strength'] = 100
-        elif item == '振奋宝石':
+        elif item in ITEM_ACTIVE:
             role['strength'] = 100
-        elif item == '回复指环':
+        elif item in ITEM_BANDAGE:
             if role['injured'] > 0:
                 role['injured'] = 0
             else:
                 role['life'] += 10
                 if role['life'] > 100:
                     role['life'] = 100
-        elif item == '治疗指环':
+        elif item in ITEM_CURE:
             if role['injured'] > 0:
                 role['injured'] = 0
             else:
                 role['life'] += 30
                 if role['life'] > 100:
                     role['life'] = 100
-        elif item == '恐鳖之心':
+        elif item in ITEM_PERFECT_CURE:
             role['injured'] = 0
             role['life'] = 100
         role['hands'].remove(item)
@@ -313,14 +302,14 @@ def act(role, action, params):
     global living
     if not living:
         return '行动未开始'
-    cost = costs.get(action, -1)
+    cost = COSTS.get(action, -1)
     if cost < 0:
         return '未定义的行动'
     if not role['able']:
         return '你被禁止行动'
     if cost > role['strength']:
         return '体力不足'
-    if action in ['search']:
+    if action in [SEARCH]:
         if time.time() - role['ts'] < 30:
             return '两次搜索之间需间隔30秒'
         role['ts'] = time.time()
@@ -328,22 +317,22 @@ def act(role, action, params):
     msg = ''
     res = ''
     try:
-        if action == 'move':
+        if action == MOVE:
             msg = '移动' + params.get('move_to', '')
             res = move(role, params.get('move_to', ''))
-        elif action == 'search':
+        elif action == SEARCH:
             msg = '搜索'
             res = search(role)
-        elif action == 'pick':
+        elif action == PICK:
             msg = '捡拾'
             res = pick(role)
-        elif action == 'attack':
+        elif action == ATTACK:
             msg = '攻击'
             res = attack(role)
-        elif action == 'equip':
+        elif action == EQUIP:
             msg = '装备' + params.get('equip_item', '')
             res = equip(role, params.get('equip_item', ''))
-        elif action == 'use':
+        elif action == USE:
             msg = '使用' + params.get('use_item', '')
             target = ''
             target_role = params.get('use_item_target_role', '')
@@ -355,10 +344,10 @@ def act(role, action, params):
                 msg += '，查看' + target_item
                 target = target_item
             res = use(role, params.get('use_item', ''), target)
-        elif action == 'throw':
+        elif action == THROW:
             msg = '丢弃' + params.get('throw_item', '')
             res = throw(role, params.get('throw_item', ''))
-        elif action == 'deliver':
+        elif action == DELIVER:
             target = params.get('deliver_target', '')
             content = params.get('deliver_content', '')
             msg = '传音' + target + '：' + content
@@ -402,12 +391,10 @@ def act_admin(action, params):
                         v['strength'] = 100
                     if v['injured']:
                         change_life(v, -10)
-            items['慧光'][1] = 1
-            items['银月之晶'][1] = 1
-            items['刷新球'][1] = 2
-            items['坚韧球'][1] = 2
-            items['王冠'][1] = 1
-            items['极限法球'][1] = 1
+            for i in ITEM_LOCATOR + ITEM_LOCK + ITEM_SHOW:
+                items[i][1] = 1
+            for i in ITEM_TELESCOPE:
+                items[i][1] = 2
         elif action == 'save':
             print(places)
             print(roles)
@@ -421,7 +408,7 @@ def act_admin(action, params):
             target = params.get('destroy_place')
             places[target]['able'] = False
             places[target]['exists'] = []
-        elif action == 'move':
+        elif action == MOVE:
             who = params.get('move_target')
             where = params.get('move_place')
             try:
