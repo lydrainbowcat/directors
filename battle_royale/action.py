@@ -202,6 +202,7 @@ def use(role, item, target):
         items[item][1] -= 1
         if item in ITEM_LOCATOR:
             if target == '':
+                items[item][1] += 1
                 return '使用失败，未选择使用目标'
             for k, v in places.items():
                 if v['able'] and target in v['exists']:
@@ -212,6 +213,7 @@ def use(role, item, target):
             return '场上无此道具'
         elif item in ITEM_TELESCOPE:
             if target == '':
+                items[item][1] += 1
                 return '使用失败，未选择使用目标'
             return ' '.join(roles[target]['things']) if len(roles[target]['things']) > 0 else '对方无道具'
         elif item in ITEM_LOCK:
