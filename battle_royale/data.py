@@ -17,7 +17,7 @@ def all_items():
 # order: 显示顺序，exists: 当地散落的道具，able: 是否启用
 places = {}
 for i in range(0, len(PLACES) * 4):
-    places[PLACES[i // 4] + DIRECTIONS[i % 4]] = { 'order': 1 + 1, 'exists': [], 'able': True }
+    places[PLACES[i // 4] + DIRECTIONS[i % 4]] = { 'order': i + 1, 'exists': [], 'able': True }
 
 # order: 显示顺序，able: 能否行动，life: 生命，strength: 体力，location: 位置，hands: 手中道具，things: 背包道具
 roles = {
