@@ -12,7 +12,7 @@ def enabled_places():
     return res
 
 def all_items():
-    return list(items.keys()) + ITEM_PERFECT_CURE + ITEM_CURE + ITEM_BANDAGE + ITEM_ACTIVE + ITEM_WATER
+    return list(items.keys()) + ITEM_PERFECT_CURE + ITEM_CURE * 5 + ITEM_BANDAGE * 5 + ITEM_ACTIVE * 3 + ITEM_WATER * 6
 
 # order: 显示顺序，exists: 当地散落的道具，able: 是否启用
 places = {}
