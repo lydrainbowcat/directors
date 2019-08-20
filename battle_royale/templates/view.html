@@ -74,12 +74,12 @@
     <p>
         <script>
             function showOptions(value) {
-                if (value == "圣者遗物" || value == "刷新球" || value == "坚韧球") {
+                if (value.startsWith("[GPS]")) {
                     document.getElementById("use_item_target_role").style.display = "inline";
                 } else {
                     document.getElementById("use_item_target_role").style.display = "none";
                 }
-                if (value == "慧光" || value == "银月之晶") {
+                if (value.startsWith("[侦]")) {
                     document.getElementById("use_item_target_item").style.display = "inline";
                 } else {
                     document.getElementById("use_item_target_item").style.display = "none";
