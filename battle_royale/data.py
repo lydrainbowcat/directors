@@ -4,7 +4,16 @@ import random
 def alive_roles():
     res = [v for k, v in roles.items() if v['life'] > 0 and v['life'] <= 100]
     res.sort(key=lambda x: x['order'])
+    for role in res:
+        role['vote'] = 1
+        for item in role['hands']:
+            role['vote'] += count_vote(item)
     return res
+
+def count_vote(item):
+    if len(items[item]) >= 3:
+        return items[item][2]
+    return 0
 
 def enabled_places():
     res = [v for k, v in places.items() if v['able']]
@@ -30,24 +39,23 @@ for i in range(0, len(ROLES)):
 # [类别，剩余次数]
 items = {}
 for i in ITEM_HOT_AOE:
-    items[i] = [1, 5]
+    items[i] = [1, 5, 0]
 for i in ITEM_HOT_VITAL:
-    items[i] = [2, 5]
+    items[i] = [2, 5, 0]
 for i in ITEM_HOT:
-    items[i] = [3, 5]
+    items[i] = [3, 5, 0]
 for i in ITEM_COLD:
-    items[i] = [4, 100]
+    items[i] = [4, 100, 1]
 for i in ITEM_PROTECT + ITEM_ENSURE:
-    items[i] = [5, 100]
+    items[i] = [5, 100, 2]
 for i in ITEM_LOCATOR:
-    items[i] = [6, 1]
+    items[i] = [6, 1, 3]
 for i in ITEM_TELESCOPE:
-    items[i] = [6, 2]
+    items[i] = [6, 2, 3]
 for i in ITEM_LOCK + ITEM_SHOW:
-    items[i] = [7, 1]
+    items[i] = [7, 1, 3]
 for i in ITEM_BOMB + ITEM_KILL:
-    items[i] = [8, 1]
-
+    items[i] = [8, 1, 0]
 for k, v in places.items():
     v['name'] = k
 

@@ -100,7 +100,8 @@
     {% for role in roles %}
     <tr>
         <td>{{ role.name }}</td><td>{{ role.life }}</td>
-        <td>{{ role.strength }}</td><td>{{ role.location }}</td>
+        <td>{{ role.strength }}</td><td>持有{{ role.vote }}票</td>
+        <td>{{ role.location }}</td>
         <td>{{ role.hands | join(' ') }}</td>
         <td>{% for item in role.things %}{{ item }}({{ items.get(item, [9, 1])[1] }}次) {% endfor %}</td>
     </tr>

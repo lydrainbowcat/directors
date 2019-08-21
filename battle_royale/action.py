@@ -64,7 +64,7 @@ def pick(role):
     role['strength'] -= COSTS[PICK]
     return '捡拾成功'
 
-def be_attacked(source, target, value, ignore_defend=False, continual=False):
+def be_attacked(source, target, value, ignore_defend=False, continual=False, method='不明原因'):
     if not ignore_defend:
         if set(ITEM_PROTECT) & set(target['hands']):
             value -= 10
@@ -88,7 +88,7 @@ def be_attacked(source, target, value, ignore_defend=False, continual=False):
             else:
                 drop.append(fb)
                 places[target['location']]['exists'].append(fb)
-        ret = '杀死了' + target['name'] + '，'
+        ret = '杀死了' + target['name'] + '，死因为' + method + '，'
         if len(gain) > 0 and len(drop) == 0:
             ret += '获得全部道具：' + ' '.join(gain)
         elif len(gain) > 0 and len(drop) > 0:
@@ -123,6 +123,7 @@ def do_attack(role, target):
     else:
         dec = 10
         district = False
+        method = '普通攻击'
         weapons = list(filter(lambda x: items.get(x, [9, 1])[0] <= 4 and items.get(x, [9, 1])[1] > 0, role['hands']))
         if len(weapons) > 0:
             weapon = weapons[0]
@@ -132,19 +133,23 @@ def do_attack(role, target):
                 role['things'].remove(weapon)
             if items[weapon][0] == 1:
                 dec += ITEM_HOT_AOE_DAMAGE
+                method = '致命伤害'
                 district = True
             elif items[weapon][0] == 2:
                 dec += ITEM_HOT_VITAL_DAMAGE
+                method = '致命伤害'
             elif items[weapon][0] == 3:
                 dec += ITEM_HOT_DAMAGE
+                method = '致命伤害'
             else:
                 dec += ITEM_COLD_DAMAGE
+                method = '失血过多'
         if district:
             for t in places[role['location']]['exists'][:]:
                 if t in roles and t != role['name']:
-                    res.append(be_attacked(role, roles[t], dec, continual=True))
+                    res.append(be_attacked(role, roles[t], dec, continual=True, method=method))
         else:
-            res.append(be_attacked(role, target, dec))
+            res.append(be_attacked(role, target, dec, method=method))
     res = list(filter(lambda x: len(x) > 0, res))
     return '攻击成功。' + '。'.join(res)
 
@@ -408,8 +413,10 @@ def act_admin(action, params):
             places[where]['exists'].append(what)
         elif action == 'destroy':
             target = params.get('destroy_place')
-            places[target]['able'] = False
-            places[target]['exists'] = []
+            for suf in [''] + DIRECTIONS:
+                if target + suf in places:
+                    places[target + suf]['able'] = False
+                    places[target + suf]['exists'] = []
         elif action == MOVE:
             who = params.get('move_target')
             where = params.get('move_place')
