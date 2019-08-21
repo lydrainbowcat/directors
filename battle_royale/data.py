@@ -11,8 +11,10 @@ def alive_roles():
     return res
 
 def count_vote(item):
-    if len(items[item]) >= 3:
+    try:
         return items[item][2]
+    except:
+        return 0
     return 0
 
 def enabled_places():
