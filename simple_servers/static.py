@@ -4,8 +4,9 @@ from gevent.pywsgi import WSGIServer
 
 app = Flask(__name__)
 
-@app.route('/')
-def index():
+@app.route('/', defaults={'path': ''})
+@app.route('/<path:path>')
+def index(path):
     return render_template('ch.html')
 
 http_server = WSGIServer(('', 83), app)
