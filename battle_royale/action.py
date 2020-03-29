@@ -40,9 +40,11 @@ def search(role):
 def can_pick(role, fb):
     sort14 = len(list(filter(lambda x: x in items and items[x][0] <= 4, role['things'])))
     sort59 = len(list(filter(lambda x: x not in items or items[x][0] >= 5, role['things'])))
-    if sort14 >= 2 and (fb in items and items[fb][0] <= 4):
+    if sort14 + sort59 >= ITEM_CAPACITY:
+        return 3 # 道具过多
+    if sort14 >= ITEM_WEAPON_CAPACITY and (fb in items and items[fb][0] <= 4):
         return 1 # 武器过多
-    if sort59 >= 4 and (fb not in items or items[fb][0] >= 5):
+    if sort59 >= ITEM_OTHERS_CAPACITY and (fb not in items or items[fb][0] >= 5):
         return 2 # 非武器类道具过多
     return 0 # OK
 
@@ -53,12 +55,15 @@ def pick(role):
     if fb == '' or fb in roles or fb not in place['exists']:
         return '捡拾失败'
     validation = can_pick(role, fb)
+    if valication == 3:
+        feedbacks[role['name']] = fb
+        return '最多拥有' + str(ITEM_CAPACITY) + '件道具，请丢弃一件后重新捡拾'
     if validation == 1:
         feedbacks[role['name']] = fb
-        return '最多拥有2件武器，请丢弃一件现有武器后重新捡拾'
+        return '最多拥有' + str(ITEM_WEAPON_CAPACITY) + '件武器，请丢弃一件现有武器后重新捡拾'
     if validation == 2:
         feedbacks[role['name']] = fb
-        return '最多拥有4件非武器类道具，请丢弃一件后重新捡拾'
+        return '最多拥有' + str(ITEM_OTHERS_CAPACITY) + '件非武器类道具，请丢弃一件后重新捡拾'
     place['exists'].remove(fb)
     role['things'].append(fb)
     role['strength'] -= COSTS[PICK]

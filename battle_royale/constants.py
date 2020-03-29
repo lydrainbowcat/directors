@@ -38,6 +38,9 @@ ITEM_BANDAGE = ['[HP10]雪莲子'] # 抵消持续伤害或生命+10
 ITEM_ACTIVE = ['[MP100]还神丹'] # 体力加满
 ITEM_WATER = ['[MP50]行军丹'] # 体力+50
 ORDINARY_DAMAGE = 10 # 普通攻击伤害值
+ITEM_CAPACITY = 6 # 背包容量上限
+ITEM_WEAPON_CAPACITY = 2 # 持有武器数量上限
+ITEM_OTHERS_CAPACITY = 4 # 持有其它道具数量上限
 
 # Actions
 MOVE = 'move'
