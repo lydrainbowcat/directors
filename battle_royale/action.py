@@ -194,9 +194,20 @@ def change_life(role, value):
     message.add(get_id(role['name']), 1, '你的生命值变化了' + str(value))
     return death
 
+def get_occupation(name):
+    if '<' not in name or '>' not in name:
+        return ''
+    l = name.find('<')
+    r = name.find('>')
+    return name[l + 1: r]
+
 def use(role, item, target):
     if item not in role['hands']:
         return '未装备此道具'
+    item_occupation = get_occupation(item)
+    role_occupation = get_occupation(role['name'])
+    if item_occupation not in role_occupation:
+        return '使用失败，道具职业与角色职业不匹配'
     tp = items.get(item, [9, 1])[0]
     times = items.get(item, [9, 1])[1]
     if times <= 0:
