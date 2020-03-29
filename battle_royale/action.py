@@ -67,7 +67,7 @@ def pick(role):
 def be_attacked(source, target, value, ignore_defend=False, continual=False, method='不明原因'):
     if not ignore_defend:
         if set(ITEM_PROTECT) & set(target['hands']):
-            value -= 10
+            value -= ITEM_PROTECT_VALUE
         if set(ITEM_ENSURE) & set(target['hands']):
             value //= 2
     if continual:
