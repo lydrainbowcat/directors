@@ -2,7 +2,7 @@ import threading
 import random
 import traceback
 import time
-from data import roles, places, items
+from data import roles, places, items, globals
 from user import get_id
 from constants import *
 import message
@@ -35,6 +35,8 @@ def search(role):
     res = random.choice(list(filter(lambda x: x != role['name'], place['exists'])))
     feedbacks[role['name']] = res
     role['strength'] -= COSTS[SEARCH]
+    if res in roles and random.random() > globals['weather']:
+        res = '未知角色'
     return res
 
 def can_pick(role, fb):
@@ -55,7 +57,7 @@ def pick(role):
     if fb == '' or fb in roles or fb not in place['exists']:
         return '捡拾失败'
     validation = can_pick(role, fb)
-    if valication == 3:
+    if validation == 3:
         feedbacks[role['name']] = fb
         return '最多拥有' + str(ITEM_CAPACITY) + '件道具，请丢弃一件后重新捡拾'
     if validation == 1:
@@ -303,6 +305,11 @@ def use(role, item, target):
                 role['life'] += 30
                 if role['life'] > 100:
                     role['life'] = 100
+        elif item in ITEM_PREMIUM_CURE:
+            role['injured'] = 0
+            role['life'] += 50
+            if role['life'] > 100:
+                role['life'] = 100
         elif item in ITEM_PERFECT_CURE:
             role['injured'] = 0
             role['life'] = 100
@@ -496,6 +503,8 @@ def act_admin(action, params):
             places[roles[vote]['location']]['exists'] += roles[vote]['things']
             roles[vote]['things'] = []
             roles[vote]['hands'] = []
+        elif action == 'weather':
+            globals['weather'] = float(params.get('weather_new', globals['weather']))
     except Exception as e:
         res = str(e)
         traceback.print_exc()

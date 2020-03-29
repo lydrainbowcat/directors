@@ -1,6 +1,10 @@
 from constants import *
 import random
 
+globals = {
+    'weather': 1.0 # 搜索到人物能看到是谁的概率
+}
+
 def alive_roles():
     res = [v for k, v in roles.items() if v['life'] > 0 and v['life'] <= 100]
     res.sort(key=lambda x: x['order'])
@@ -23,7 +27,8 @@ def enabled_places():
     return res
 
 def all_items():
-    return list(items.keys()) + ITEM_PERFECT_CURE + ITEM_CURE * 5 + ITEM_BANDAGE * 5 + ITEM_ACTIVE * 3 + ITEM_WATER * 6 + list(ITEM_UPGRADE_MAP.keys()) * 2
+    return list(items.keys()) + ITEM_PERFECT_CURE + ITEM_PREMIUM_CURE * 2 + ITEM_CURE * 3 + \
+        ITEM_BANDAGE * 5 + ITEM_ACTIVE * 3 + ITEM_WATER * 6 + list(ITEM_UPGRADE_MAP.keys()) * 2
 
 # order: 显示顺序，exists: 当地散落的道具，able: 是否启用
 places = {}
@@ -45,13 +50,13 @@ for i in range(0, len(ROLES)):
 # [类别，剩余次数]
 items = {}
 for i in ITEM_HOT_AOE:
-    items[i] = [1, 5, 0]
+    items[i] = [1, ITEM_HOT_AOE_TIMES, 0]
 for i in ITEM_HOT_VITAL:
-    items[i] = [2, 5, 0]
+    items[i] = [2, ITEM_HOT_VITAL_TIMES, 0]
 for i in ITEM_HOT:
-    items[i] = [3, 5, 0]
+    items[i] = [3, ITEM_HOT_TIMES, 0]
 for i in ITEM_COLD:
-    items[i] = [4, 100, 1]
+    items[i] = [4, ITEM_COLD_TIMES, 1]
 for i in ITEM_PROTECT + ITEM_ENSURE:
     items[i] = [5, 100, 2]
 for i in ITEM_LOCATOR:

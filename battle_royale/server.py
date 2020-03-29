@@ -1,7 +1,7 @@
 from flask import Flask
 from flask import request, redirect, url_for, render_template
 from user import users, encrypt, decrypt, is_director, has_user, get_id
-from data import roles, places, alive_roles, enabled_places, items, all_items
+from data import roles, places, alive_roles, enabled_places, items, all_items, globals
 from action import act, act_admin
 from constants import *
 import message
@@ -33,7 +33,7 @@ def view_messages(key):
     if is_director(user):
         messages = message.all()
         return render_template('view_all.html', messages=messages, send_url='/api/send/'+key, admin_url='/api/admin/'+key,
-                               roles=alive_roles(), places=enabled_places(), items=items)
+                               roles=alive_roles(), places=enabled_places(), items=items, globals=globals)
 
     else:
         messages = message.get(user)

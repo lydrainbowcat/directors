@@ -52,6 +52,10 @@
         <input type="text" name="drop_place" placeholder="区域" size="10"/>
     </p>
     <p>
+        <label><input type="radio" name="action" value="weather" />调整天气（搜索到人物能看到是谁的概率）</label>
+        <input type="number" min="0" max="1" step="0.1" name="weather_new" value="{{ globals.weather }}" size="10"/>
+    </p>
+    <p>
         <label><input type="radio" name="action" value="life" />加减生命</label>
         <input type="text" name="life_target" placeholder="角色名称" size="10"/>
         <input type="text" name="life_value" placeholder="数值（正/负）" size="10"/>
