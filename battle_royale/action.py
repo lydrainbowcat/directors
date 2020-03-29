@@ -206,6 +206,33 @@ def get_occupation(name):
     r = name.find('>')
     return name[l + 1: r]
 
+def upgrade(role, item, target):
+    formulas = ITEM_UPGRADE_MAP.get(item, [])
+    target_formula = []
+    # 先寻找符合目标等级的公式合成
+    for formula in formulas:
+        if target in formula[0]:
+            if set(formula[1:]) <= set(role['things']):
+                target_formula = formula
+                break
+    # 寻找其它公式合成
+    if len(target_formula) == 0:
+        for formula in formulas:
+            if set(formula[1:]) <= set(role['things']):
+                target_formula = formula
+                break
+    if len(target_formula) == 0:
+        return '合成失败，所需材料不足'
+    for x in target_formula[1:]:
+        role['things'].remove(x)
+        if x in role['hands']:
+            role['hands'].remove(x)
+    role['hands'].remove(item)
+    role['things'].remove(item)
+    role['things'].append(target_formula[0])
+    equip(role, target_formula[0])
+    return '合成并装备' + target_formula[0] + '成功，消耗了' + '、'.join([item] + target_formula[1:])
+
 def use(role, item, target):
     if item not in role['hands']:
         return '未装备此道具'
@@ -279,6 +306,8 @@ def use(role, item, target):
         elif item in ITEM_PERFECT_CURE:
             role['injured'] = 0
             role['life'] = 100
+        elif item in ITEM_UPGRADE_MAP:
+            return upgrade(role, item, target)
         role['hands'].remove(item)
         role['things'].remove(item)
         return '使用成功'
@@ -366,6 +395,9 @@ def act(role, action, params):
             if target_item != '':
                 msg += '，查看' + target_item
                 target = target_item
+            target_upgrade = params.get('use_item_target_upgrade', '')
+            if target_upgrade != '':
+                target = target_upgrade
             res = use(role, params.get('use_item', ''), target)
         elif action == THROW:
             msg = '丢弃' + params.get('throw_item', '')

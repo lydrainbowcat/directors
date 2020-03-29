@@ -3,6 +3,7 @@ from flask import request, redirect, url_for, render_template
 from user import users, encrypt, decrypt, is_director, has_user, get_id
 from data import roles, places, alive_roles, enabled_places, items, all_items
 from action import act, act_admin
+from constants import *
 import message
 
 app = Flask(__name__)
@@ -38,7 +39,7 @@ def view_messages(key):
         messages = message.get(user)
         role = roles[users[user]]
         return render_template('view.html', messages=messages, send_url='/api/send/'+key, role=role, all_roles=roles.keys(),
-                               roles=alive_roles(), places=enabled_places(), items=items, all_items=all_items())
+                               roles=alive_roles(), places=enabled_places(), items=items, all_items=all_items(), item_levels = ITEM_TARGET_LEVELS)
 
 @app.route('/api/send/<key>', methods=['POST'])
 def send_message(key):

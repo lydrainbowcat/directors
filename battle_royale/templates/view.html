@@ -84,6 +84,11 @@
                 } else {
                     document.getElementById("use_item_target_item").style.display = "none";
                 }
+                if (value.startsWith("[合]")) {
+                    document.getElementById("use_item_target_upgrade").style.display = "inline";
+                } else {
+                    document.getElementById("use_item_target_upgrade").style.display = "none";
+                }
             }
         </script>
         <label><input type="radio" name="action" value="use" />使用手里的</label>
@@ -103,6 +108,12 @@
             <option value="">查看</option>
             {% for item in all_items %}
             <option value="{{ item }}">{{ item }}</option>
+            {% endfor %}
+        </select>
+        <select name="use_item_target_upgrade" id="use_item_target_upgrade" style="display:none">
+            <option value="">目标等级</option>
+            {% for level in item_levels %}
+            <option value="{{ level }}">{{ level }}</option>
             {% endfor %}
         </select>
     </p>
