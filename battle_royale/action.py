@@ -417,6 +417,10 @@ def act(role, action, params):
     except Exception as e:
         res = str(e)
         traceback.print_exc()
+    if action == MOVE:
+        role['rest'] -= 1
+    else:
+        role['rest'] = 0
     mutex.release()
     return msg + '。反馈：' + res
 
@@ -453,6 +457,9 @@ def act_admin(action, params):
                         v['strength'] = 100
                     if v['injured']:
                         change_life(v, -ITEM_HOT_AOE_DAMAGE_LASTED)
+                    if v['rest'] > 0:
+                        change_life(v, 50)
+                    v['rest'] = 2
             for i in ITEM_LOCATOR + ITEM_LOCK + ITEM_SHOW:
                 items[i][1] = 1
             for i in ITEM_TELESCOPE:

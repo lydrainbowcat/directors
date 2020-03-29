@@ -39,13 +39,13 @@ else:
     for i in range(0, len(PLACES)):
         places[PLACES[i]] = { 'order': i + 1, 'exists': [], 'able': True }
 
-# order: 显示顺序，able: 能否行动，life: 生命，strength: 体力，location: 位置，hands: 手中道具，things: 背包道具
+# order: 显示顺序，able: 能否行动，life: 生命，strength: 体力，location: 位置，hands: 手中道具，things: 背包道具，rest: 是否满足静养条件
 roles = {
-    '导演': { 'order': -1, 'life': 1000, 'strength': 100, 'hands': [], 'things': [], 'location': '主席台', 'able': False },
-    '观众': { 'order': 0, 'life': 1000, 'strength': 100, 'hands': [], 'things': [], 'location': '看台', 'able': False }
+    '导演': { 'order': -1, 'life': 1000, 'strength': 100, 'hands': [], 'things': [], 'location': '主席台', 'able': False, 'rest': 2 },
+    '观众': { 'order': 0, 'life': 1000, 'strength': 100, 'hands': [], 'things': [], 'location': '看台', 'able': False, 'rest': 2 }
 }
 for i in range(0, len(ROLES)):
-    roles[ROLES[i]] = { 'order': i + 1, 'life': 100, 'strength': 100, 'hands': [], 'things': [], 'location': '', 'able': True }
+    roles[ROLES[i]] = { 'order': i + 1, 'life': 100, 'strength': 100, 'hands': [], 'things': [], 'location': '', 'able': True, 'rest': 2 }
 
 # [类别，剩余次数]
 items = {}
