@@ -15,6 +15,7 @@ AUDIENCE_PASSWORD = 'test'
 # 例如"[冷]<弓箭>诸葛连弩"只能被"酌杯<弓箭手>"使用，不能被"小妤<投掷手>"和"取酒"使用
 ITEM_HOT_AOE = ['[热群]雷灵珠', '[热群]火灵珠', '[热群]土灵珠'] # AOE热武器（带持续伤害）
 ITEM_HOT_AOE_DAMAGE = 40
+ITEM_HOT_AOE_DAMAGE_LASTED = 10
 ITEM_HOT_VITAL = ['[热狙]七巧弓', '[热狙]火神弓', '[热狙]幽冥弓', '[热狙]射日弓'] # 狙击类热武器
 ITEM_HOT_VITAL_DAMAGE = 80
 ITEM_HOT = ['[热]降魔杖', '[热]灵泉杖', '[热]桃木杖', '[热]轰雷杖', '[热]鬼头杖', '[热]天蛇杖'] # 热武器
@@ -29,12 +30,14 @@ ITEM_TELESCOPE = ['[侦]八卦镜', '[侦]乾坤镜'] # 查看人物持有的道
 ITEM_LOCK = ['[锁]女娲玉'] # 锁区域行动（电击棒）
 ITEM_SHOW = ['[扬声]极目水'] # 大喇叭（公示器）
 ITEM_BOMB = ['[炸]血海棠', '[炸]孔雀胆', '[炸]断肠草'] # 暗杀系手榴弹
+ITEM_BOMB_DAMAGE = 50
 ITEM_KILL = ['[毒]无影毒'] # 暗杀系氰化钾
 ITEM_PERFECT_CURE = ['[HP100]天香续命露'] #生命加满并抵消持续伤害
 ITEM_CURE = ['[HP30]舍利子'] # 抵消持续伤害或生命+30
 ITEM_BANDAGE = ['[HP10]雪莲子'] # 抵消持续伤害或生命+10
 ITEM_ACTIVE = ['[MP100]还神丹'] # 体力加满
 ITEM_WATER = ['[MP50]行军丹'] # 体力+50
+ORDINARY_DAMAGE = 10 # 普通攻击伤害值
 
 # Actions
 MOVE = 'move'

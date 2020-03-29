@@ -71,7 +71,7 @@ def be_attacked(source, target, value, ignore_defend=False, continual=False, met
         if set(ITEM_ENSURE) & set(target['hands']):
             value //= 2
     if continual:
-        target['injured'] = 10
+        target['injured'] = ITEM_HOT_AOE_DAMAGE_LASTED
     target['life'] -= value
     message.add(get_id(target['name']), 1, '你被攻击，受到' + str(value) + '伤害')
     if target['life'] <= 0:
@@ -109,19 +109,19 @@ def do_attack(role, target):
             if bomb in role['hands']:
                 for t in places[role['location']]['exists'][:]:
                     if t in roles and t != role['name']:
-                        res.append(be_attacked(role, roles[t], 60, ignore_defend=True))
+                        res.append(be_attacked(role, roles[t], ITEM_BOMB_DAMAGE + ORDINARY_DAMAGE, ignore_defend=True))
                 role['hands'].remove(bomb)
                 role['things'].remove(bomb)
                 break
     elif set(ITEM_KILL) & set(role['hands']):
         for kill in ITEM_KILL:
             if kill in role['hands']:
-                res.append(be_attacked(role, target, 110, ignore_defend=True))
+                res.append(be_attacked(role, target, 100 + ORDINARY_DAMAGE, ignore_defend=True))
                 role['hands'].remove(kill)
                 role['things'].remove(kill)
                 break
     else:
-        dec = 10
+        dec = ORDINARY_DAMAGE
         district = False
         method = '普通攻击'
         weapons = list(filter(lambda x: items.get(x, [9, 1])[0] <= 4 and items.get(x, [9, 1])[1] > 0, role['hands']))
@@ -246,7 +246,7 @@ def use(role, item, target):
         elif item in ITEM_BOMB:
             for t in places[role['location']]['exists'][:]:
                 if t in roles and t != role['name']:
-                    death += change_life(roles[t], -50)
+                    death += change_life(roles[t], -ITEM_BOMB_DAMAGE)
         role['hands'].remove(item)
         role['things'].remove(item)
         return '使用成功。' + ('杀死了' + ' '.join(death) + '，道具散落' if len(death) > 0 else '无人死亡')
@@ -408,7 +408,7 @@ def act_admin(action, params):
                     if v['strength'] > 100:
                         v['strength'] = 100
                     if v['injured']:
-                        change_life(v, -10)
+                        change_life(v, -ITEM_HOT_AOE_DAMAGE_LASTED)
             for i in ITEM_LOCATOR + ITEM_LOCK + ITEM_SHOW:
                 items[i][1] = 1
             for i in ITEM_TELESCOPE:
