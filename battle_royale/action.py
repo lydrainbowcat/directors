@@ -285,7 +285,11 @@ def use(role, item, target):
         role['things'].remove(item)
         return '使用成功。' + ('杀死了' + ' '.join(death) + '，道具散落' if len(death) > 0 else '无人死亡')
     elif tp == 9:
-        if item in ITEM_WATER:
+        if item in ITEM_TEA:
+            role['strength'] += 20
+            if role['strength'] > 100:
+                role['strength'] = 100
+        elif item in ITEM_WATER:
             role['strength'] += 50
             if role['strength'] > 100:
                 role['strength'] = 100
@@ -458,7 +462,7 @@ def act_admin(action, params):
                     if v['injured']:
                         change_life(v, -ITEM_HOT_AOE_DAMAGE_LASTED)
                     if v['rest'] > 0:
-                        change_life(v, 50)
+                        change_life(v, 100)
                     v['rest'] = 2
             for i in ITEM_LOCATOR + ITEM_LOCK + ITEM_SHOW:
                 items[i][1] = 1

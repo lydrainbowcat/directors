@@ -27,8 +27,8 @@ def enabled_places():
     return res
 
 def all_items():
-    return list(items.keys()) + ITEM_PERFECT_CURE + ITEM_PREMIUM_CURE * 2 + ITEM_CURE * 3 + \
-        ITEM_BANDAGE * 5 + ITEM_ACTIVE * 3 + ITEM_WATER * 6 + list(ITEM_UPGRADE_MAP.keys()) * 2
+    return list(items.keys()) + ITEM_PERFECT_CURE + ITEM_PREMIUM_CURE + ITEM_CURE + \
+        ITEM_BANDAGE + ITEM_ACTIVE + ITEM_WATER + ITEM_TEA + list(ITEM_UPGRADE_MAP.keys())
 
 # order: 显示顺序，exists: 当地散落的道具，able: 是否启用
 places = {}
@@ -71,7 +71,11 @@ for k, v in places.items():
     v['name'] = k
 
 # 随机初始道具
-for i in all_items():
+initial_items = ITEM_COLD * 3 + list(ITEM_UPGRADE_MAP.keys()) * 3 + \
+    ITEM_PROTECT + ITEM_ENSURE + ITEM_LOCATOR + ITEM_TELESCOPE + ITEM_LOCK + ITEM_SHOW + ITEM_BOMB + ITEM_KILL + \
+    ITEM_PERFECT_CURE + ITEM_PREMIUM_CURE * 2 + ITEM_CURE * 3 + ITEM_BANDAGE * 6 + \
+    ITEM_ACTIVE * 10 + ITEM_WATER * 5 + ITEM_TEA * 5
+for i in initial_items:
     places[random.choice(list(places.keys()))]['exists'].append(i)
 
 for k, v in roles.items():

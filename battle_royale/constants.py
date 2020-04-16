@@ -1,5 +1,5 @@
 # 地点配置
-PLACES = ['码头', '工厂', '贫民窟', '旅馆', '教堂', '市政厅', '消防局', '池塘', '住宅区', '灯塔', '小巷', '学校', '隧道', '山道', '寺庙', '靶场', '医院', '森林', '海滩', '墓园', '井']
+PLACES = ['码头', '工厂', '贫民窟', '旅馆', '教堂', '市政厅', '消防局', '池塘', '住宅区', '灯塔', '小巷', '学校', '隧道', '山道', '寺庙', '靶场', '医院', '森林', '海滩', '墓园', '井', '研究中心']
 DIRECTIONS = ['东', '南', '西', '北']
 DIRECTIONS_ENABLED = False # 是否启用方位
 
@@ -15,7 +15,7 @@ ROLES = [
     '唐雪见<劈砍>', '苏媚<穿刺>', '云霆<钝器>', '王小虎<投掷>', '楚碧痕<枪械>', '重楼<弓箭>', '唐雨柔<拳掌>',
     '姜云凡<劈砍', '小蛮<穿刺>', '韩菱纱<枪械>', '女苑<弓箭>']
 PASSWORDS = ['gzkw51', 'x68295', 'ecb740', 'f72869', 'w91792', 'fnnv10', '666730', 'ml0809', 'z65583', '286034', 'o48277', '685125', 'xh7025', 'pc6638', 'lw9528', 'w69823', 'r29040', 'bdfw85', 'q75297', 'cyy052', 'szg571', '958201', 'vzr223', 'hik272', 'gexb00', '506219', 'a40717', 'xpka61', 'mf2620', 'qt9968', 'wsx43r', '898725']
-DIRECTOR_PASSWORD = 'ang708j3'
+DIRECTOR_PASSWORD = 'm85bfm3'
 AUDIENCE_PASSWORD = 'test'
 
 # 道具配置
@@ -69,10 +69,11 @@ ITEM_CURE = ['[HP30]绷带'] # 抵消持续伤害或生命+30
 ITEM_BANDAGE = ['[HP10]鸟蛋'] # 抵消持续伤害或生命+10
 ITEM_ACTIVE = ['[MP100]威士忌'] # 体力加满
 ITEM_WATER = ['[MP50]鸡尾酒'] # 体力+50
+ITEM_TEA = ['[MP20]矿泉水'] # 体力+20
 ORDINARY_DAMAGE = 5 # 普通攻击伤害值
 ITEM_CAPACITY = 6 # 背包容量上限
-ITEM_WEAPON_CAPACITY = 2 # 持有武器数量上限
-ITEM_OTHERS_CAPACITY = 4 # 持有其它道具数量上限
+ITEM_WEAPON_CAPACITY = 6 # 持有武器数量上限
+ITEM_OTHERS_CAPACITY = 6 # 持有其它道具数量上限
 
 # 道具合成系统
 # 格式：'升级器名称': [['新道具1名称', '所需道具', ...], ['新道具2名称', '所需道具', ...], ...]
@@ -132,5 +133,5 @@ DELIVER = 'deliver'
 
 # 体力消耗配置
 COSTS = {
-    MOVE: 5, SEARCH: 5, PICK: 5, ATTACK: 5, EQUIP: 0, USE: 0, THROW: 0, DELIVER: 5
+    MOVE: 5, SEARCH: 5, PICK: 0, ATTACK: 0, EQUIP: 0, USE: 0, THROW: 0, DELIVER: 105
 }
