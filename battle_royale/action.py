@@ -456,13 +456,14 @@ def act_admin(action, params):
                 if v['life'] > 0 and v['life'] <= 100:
                     v['able'] = True
                     v['deliver'] = 0
-                    v['strength'] += 50
+                    v['strength'] += RECOVER_STRENGTH_DAILY
                     if v['strength'] > 100:
                         v['strength'] = 100
-                    if v['injured']:
+                    if v['injured']: # 持续伤害
                         change_life(v, -ITEM_HOT_AOE_DAMAGE_LASTED)
-                    if v['rest'] > 0:
-                        change_life(v, 100)
+                    if v['rest'] > 0: # 满足静养条件
+                        change_life(v, RECOVER_LIFE_RESTED)
+                        v['strength'] = 100
                     v['rest'] = 2
             for i in ITEM_LOCATOR + ITEM_LOCK + ITEM_SHOW:
                 items[i][1] = 1

@@ -74,7 +74,7 @@ for k, v in places.items():
 initial_items = ITEM_COLD * 3 + list(ITEM_UPGRADE_MAP.keys()) * 3 + \
     ITEM_PROTECT + ITEM_ENSURE + ITEM_LOCATOR + ITEM_TELESCOPE + ITEM_LOCK + ITEM_SHOW + ITEM_BOMB + ITEM_KILL + \
     ITEM_PERFECT_CURE + ITEM_PREMIUM_CURE * 2 + ITEM_CURE * 3 + ITEM_BANDAGE * 6 + \
-    ITEM_ACTIVE * 10 + ITEM_WATER * 5 + ITEM_TEA * 5
+    ITEM_ACTIVE * 10 + ITEM_WATER * 2 + ITEM_TEA * 2
 for i in initial_items:
     places[random.choice(list(places.keys()))]['exists'].append(i)
 
