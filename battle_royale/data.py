@@ -71,10 +71,7 @@ for k, v in places.items():
     v['name'] = k
 
 # 随机初始道具
-initial_items = ITEM_COLD * 3 + list(ITEM_UPGRADE_MAP.keys()) * 3 + \
-    ITEM_PROTECT + ITEM_ENSURE + ITEM_LOCATOR + ITEM_TELESCOPE + ITEM_LOCK + ITEM_SHOW + ITEM_BOMB + ITEM_KILL + \
-    ITEM_PERFECT_CURE + ITEM_PREMIUM_CURE * 2 + ITEM_CURE * 3 + ITEM_BANDAGE * 6 + \
-    ITEM_ACTIVE * 10 + ITEM_WATER * 2 + ITEM_TEA * 2
+initial_items = ITEM_COLD * 2 + list(ITEM_UPGRADE_MAP.keys()) * 2 + ['[合]<钝器>升级器', '[合]<钝器>升级器', '[合]<穿刺>升级器']
 for i in initial_items:
     places[random.choice(list(places.keys()))]['exists'].append(i)
 
