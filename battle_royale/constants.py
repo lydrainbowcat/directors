@@ -27,7 +27,7 @@ ITEM_HOT_VITAL = [ # 狙击类热武器
     '[紫]<拳掌>血翼指虎', '[紫]<拳掌>布瑞赛尔护手'
 ]
 ITEM_HOT_VITAL_DAMAGE = 20
-ITEM_HOT_VITAL_TIMES = 100
+ITEM_HOT_VITAL_TIMES = 10000
 ITEM_HOT = [ # 热武器
     '[蓝]<劈砍>大太刀', '[蓝]<劈砍>死神镰刀', '[蓝]<劈砍>斩马刀',
     '[蓝]<穿刺>三叉戟', '[蓝]<穿刺>带电短刀', '[蓝]<穿刺>西洋剑',
@@ -38,12 +38,12 @@ ITEM_HOT = [ # 热武器
     '[蓝]<拳掌>铁砂掌', '[蓝]<拳掌>羽翼指虎', '[蓝]<拳掌>恶魔之爪',
 ]
 ITEM_HOT_DAMAGE = 15
-ITEM_HOT_TIMES = 100
+ITEM_HOT_TIMES = 10000
 ITEM_COLD = [ # 冷兵器
     '[绿]佩剑', '[绿]战斧', '[绿]长矛', '[绿]皮鞭', '[绿]回力镖', '[绿]IM-10', '[绿]复合弓', '[绿]铁爪'
 ]
 ITEM_COLD_DAMAGE = 10
-ITEM_COLD_TIMES = 1000
+ITEM_COLD_TIMES = 10000
 ITEM_ENSURE = [] # 伤害减半
 ITEM_PROTECT = ['[防]热情短裙', '[防]神职法衣', '[防]十字军重甲', '[防]管家服', '[防]光学迷彩服', '[防]御史衣', '[防]余晖之铠'] # 抵消若干点伤害
 ITEM_PROTECT_VALUE = 5 # 防具抵御的伤害量
