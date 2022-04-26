@@ -11,10 +11,10 @@
 </style>
 <h3>提交行动</h3>
 <p>
-    {{ role.name }}，生命：<b style="color:red">{{ role.life }}</b>{% if role.injured > 0 %}（每晚结束减10）{% endif %}，
+    {{ role.name }}，生命：<b style="color:red">{{ role.life }}</b>{% if role.injured > 0 %}（每天清晨减10）{% endif %}，
     体力：{{ role.strength }}，当前位置：{{ role.location }}<br/>
     手中道具：{{ role.hands | join(' ') }} | 
-    背包道具：{% for item in role.things %}{{ item }}({{ items.get(item, [9, 1])[1] }}次) {% endfor %}<br/>
+    背包道具：{% for item in role.things %}{{ item }}{% if items.get(item, [9, 1])[1] <= 10 %}({{ items.get(item, [9, 1])[1] }}次){% endif %} {% endfor %}<br/>
 </p>
 <form action="{{ send_url }}" method="POST" onsubmit="return isValid()">
     {% if role.location == '' %}

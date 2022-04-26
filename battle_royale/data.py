@@ -69,9 +69,11 @@ for i in ITEM_BOMB + ITEM_KILL:
     items[i] = [8, 1, 0]
 for k, v in places.items():
     v['name'] = k
+# 是否已经出现在场过，避免升级产生重复道具
+item_generated = set()
 
 # 随机初始道具
-initial_items = ITEM_COLD * 2 + list(ITEM_UPGRADE_MAP.keys()) * 3
+initial_items = ITEM_COLD * 3 + list(ITEM_UPGRADE_MAP.keys()) * 3
 for i in initial_items:
     places[random.choice(list(places.keys()))]['exists'].append(i)
 

@@ -2,7 +2,7 @@ import threading
 import random
 import traceback
 import time
-from data import roles, places, items, globals
+from data import roles, places, items, globals, item_generated
 from user import get_id
 from constants import *
 import message
@@ -208,19 +208,24 @@ def get_occupation(name):
     r = name.find('>')
     return name[l + 1: r]
 
+def can_generate(item):
+    # 无次数限制，或者尚未产生过
+    return items.get(item, [9, 1])[1] > 10 or item not in item_generated
+
 def upgrade(role, item, target):
     formulas = ITEM_UPGRADE_MAP.get(item, [])
+    random.shuffle(formulas)
     target_formula = []
     # 先寻找符合目标等级的公式合成
     for formula in formulas:
         if target in formula[0]:
-            if set(formula[1:]) <= set(role['things']):
+            if set(formula[1:]) <= set(role['things']) and can_generate(formula[0]):
                 target_formula = formula
                 break
     # 寻找其它公式合成
     if len(target_formula) == 0:
         for formula in formulas:
-            if set(formula[1:]) <= set(role['things']):
+            if set(formula[1:]) <= set(role['things']) and can_generate(formula[0]):
                 target_formula = formula
                 break
     if len(target_formula) == 0:
@@ -233,6 +238,7 @@ def upgrade(role, item, target):
     role['things'].remove(item)
     role['things'].append(target_formula[0])
     equip(role, target_formula[0])
+    item_generated.add(target_formula[0])
     return '合成并装备' + target_formula[0] + '成功，消耗了' + '、'.join([item] + target_formula[1:])
 
 def use(role, item, target):

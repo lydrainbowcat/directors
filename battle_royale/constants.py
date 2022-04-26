@@ -75,7 +75,7 @@ ITEM_OTHERS_CAPACITY = 6 # 持有其它道具数量上限
 # 道具合成系统
 # 格式：'升级器名称': [['新道具1名称', '所需道具', ...], ['新道具2名称', '所需道具', ...], ...]
 # 即一个升级器可对应多个合成公式，使用该升级器时，优先挑选符合目标等级的公式，然后自动挑选第一个满足条件的公式合成
-ITEM_TARGET_LEVELS = ['[紫]', '[蓝]', '橙']
+ITEM_TARGET_LEVELS = ['[蓝]', '[紫]', '[橙]']
 ITEM_UPGRADE_MAP = {}
 ITEM_UPGRADE_GENERATE_MAP = {
     '[合]自然升级器': [
@@ -97,7 +97,8 @@ ITEM_UPGRADE_GENERATE_MAP = {
          '[蓝]燃烧弹', '[蓝]复古扑克', '[蓝]强力回力镖',
          '[蓝]轻机枪', '[蓝]斯太尔AUG', '[蓝]AK-47',
          '[蓝]十字弩', '[蓝]诸葛连弩', '[蓝]火矢弓',
-         '[蓝]铁砂掌', '[蓝]羽翼指虎', '[蓝]恶魔之爪']
+         '[蓝]铁砂掌', '[蓝]羽翼指虎', '[蓝]恶魔之爪'],
+        ['[绿]佩剑', '[绿]战斧', '[绿]长矛', '[绿]皮鞭', '[绿]回力镖', '[绿]IM-10', '[绿]复合弓', '[绿]铁爪']
     ],
     '[合]人造升级器': [
         ['[紫]青龙偃月刀', '[紫]盘古斧', '[紫]宇宙双叉戟', '[紫]芭蕉扇',
@@ -109,17 +110,16 @@ ITEM_UPGRADE_GENERATE_MAP = {
          '[蓝]燃烧弹', '[蓝]复古扑克', '[蓝]强力回力镖',
          '[蓝]轻机枪', '[蓝]斯太尔AUG', '[蓝]AK-47',
          '[蓝]十字弩', '[蓝]诸葛连弩', '[蓝]火矢弓',
-         '[蓝]铁砂掌', '[蓝]羽翼指虎', '[蓝]恶魔之爪']
+         '[蓝]铁砂掌', '[蓝]羽翼指虎', '[蓝]恶魔之爪'],
+        ['[绿]佩剑', '[绿]战斧', '[绿]长矛', '[绿]皮鞭', '[绿]回力镖', '[绿]IM-10', '[绿]复合弓', '[绿]铁爪']
     ],
 }
 for k, v in ITEM_UPGRADE_GENERATE_MAP.items():
     ITEM_UPGRADE_MAP[k] = []
-    for x in v[0]:
-        for y in v[1]:
-            ITEM_UPGRADE_MAP[k].append([x, y])
-    for x in v[1]:
-        for y in ITEM_COLD:
-            ITEM_UPGRADE_MAP[k].append([x, y])
+    for level in range(0, len(v) - 1):
+        for x in v[level]:
+            for y in v[level + 1]:
+                ITEM_UPGRADE_MAP[k].append([x, y])
 # import pprint
 # pprint.pprint(ITEM_UPGRADE_MAP)
 
