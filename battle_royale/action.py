@@ -164,7 +164,7 @@ def attack(role):
     fb = feedbacks.get(role['name'], '')
     feedbacks[role['name']] = ''
     place = places[role['location']]
-    if fb == '' or fb not in roles or fb not in place['exists']:
+    if fb == '' or fb not in roles or fb not in place['exists'] or place['safe']:
         return '攻击失败'
     target = roles[fb]
     if target['life'] <= 0 or target['life'] > 100:
