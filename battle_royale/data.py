@@ -37,7 +37,7 @@ if DIRECTIONS_ENABLED:
         places[PLACES[i // 4] + DIRECTIONS[i % 4]] = { 'order': i + 1, 'exists': [], 'able': True, 'safe': PLACES[i // 4] in SAFE_PLACES }
 else:
     for i in range(0, len(PLACES)):
-        places[PLACES[i]] = { 'order': i + 1, 'exists': [], 'able': True, 'safe': PLACES[i // 4] in SAFE_PLACES }
+        places[PLACES[i]] = { 'order': i + 1, 'exists': [], 'able': True, 'safe': PLACES[i] in SAFE_PLACES }
 
 # order: 显示顺序，able: 能否行动，life: 生命，strength: 体力，location: 位置，hands: 手中道具，things: 背包道具，rest: 是否满足静养条件
 roles = {
